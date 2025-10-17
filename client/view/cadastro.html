@@ -1,0 +1,314 @@
+<div class="card-grafico-filtro row">
+    <div class="card card-body">
+        <input type="hidden" id="idMaterial">
+        <div class="card-header bg-success text-white">
+            Cadastro de Material
+        </div>
+
+        <div class="row">
+            <!-- Descrição / Nome -->
+            <div class="col-md-4 mb-3">
+                <label for="descricao" class="form-label">Descrição do
+                    Material</label>
+                <input type="text" class="form-control" id="descricao"
+                    placeholder="Ex: Resina Epóxi">
+            </div>
+
+            <!-- Quantidade -->
+            <div class="col-md-4 mb-3">
+                <label for="quantidade" class="form-label">Quantidade</label>
+                <input type="number" class="form-control" id="quantidade"
+                    placeholder="Ex: 50">
+            </div>
+
+            <!-- Tipo de Contagem -->
+            <div class="col-md-4 mb-3">
+                <label for="tipoContagem" class="form-label">Tipo de
+                    Contagem</label>
+                <select class="form-select" id="tipoContagem">
+                    <option value>Selecione</option>
+                    <option value="Unidade">Unidade</option>
+                    <option value="Litros">Litros</option>
+                    <option value="Kg">Kg</option>
+                </select>
+            </div>
+
+            <!-- Valor Unitário -->
+            <div class="col-md-4 mb-3">
+                <label for="valorUnitario" class="form-label">Valor Unitário
+                    (R$)</label>
+                <input type="number" step="0.01" class="form-control"
+                    id="valorUnitario" placeholder="Ex: 12.50">
+            </div>
+
+            <!-- Unidade de Medida -->
+            <div class="col-md-4 mb-3">
+                <label for="unidadeMedida" class="form-label">Unidade de Medida
+                    (KG, L, Item)</label>
+                <input type="text" class="form-control" id="unidadeMedida"
+                    placeholder="Ex: KG">
+            </div>
+
+            <!-- Kardex -->
+            <div class="col-md-4 mb-3">
+                <label for="kardex" class="form-label">Kardex</label>
+                <input type="text" class="form-control" id="kardex"
+                    placeholder="Código interno do material">
+            </div>
+
+            <!-- Data de Validade -->
+            <div class="col-md-4 mb-3">
+                <label for="validade" class="form-label">Data de
+                    Validade</label>
+                <input type="date" class="form-control" id="validade">
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-4 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status">
+                    <option value>Selecione</option>
+                    <option value="Ativo">Ativo</option>
+                    <option value="Utilizado">Utilizado</option>
+                    <option value="N. Utilizado">N. Utilizado</option>
+                    <option value="Retornado">Retornado</option>
+                    <option value="Inativo">Inativo</option>
+                    <option value="Vencido">Vencido</option>
+                </select>
+            </div>
+
+            <!-- Tipo (FK) -->
+            <div class="col-md-4 mb-3">
+                <label for="tipoMaterial" class="form-label">Tipo de
+                    Material</label>
+                <select class="form-select" id="tipoMaterial">
+                    <option value>Selecione</option>
+                    <option value="1">Químico</option>
+                    <option value="2">Resina</option>
+                    <option value="3">Fibra</option>
+                    <option value="4">Ferramenta</option>
+                    <option value="5">Equipamento</option>
+                </select>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Card Plataforma -->
+        <div class="col-md-6">
+            <div class="card card-body">
+                <div class="card-header bg-dark text-white">
+                    Cadastro de Plataforma
+                </div>
+
+                <!-- Nome da Plataforma -->
+                <div class="mb-3">
+                    <label for="nomePlataforma" class="form-label">Nome da
+                        Plataforma</label>
+                    <input type="text" class="form-control" id="nomePlataforma"
+                        placeholder="Ex: P-62">
+                </div>
+
+                <!-- Cliente -->
+                <div class="mb-3">
+                    <label for="clientePlataforma"
+                        class="form-label">Cliente</label>
+                    <input class="form-control" list="listaClientes"
+                        id="clientePlataforma"
+                        placeholder="Digite ou selecione">
+                    <datalist id="listaClientes">
+                        <option value="Petrobras">
+                            <option value="Equinor">
+                                <option value="Modec">
+                                </datalist>
+                            </div>
+
+                            <!-- Bacia -->
+                            <div class="mb-3">
+                                <label for="bacia"
+                                    class="form-label">Bacia</label>
+                                <input class="form-control" list="listaBacias"
+                                    id="bacia"
+                                    placeholder="Digite ou selecione">
+                                <datalist id="listaBacias">
+                                    <option value="Campos">
+                                        <option value="Santos">
+                                            <option value="Espírito Santo">
+                                                <option value="Potiguar">
+                                                </datalist>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card Funcionário -->
+                                    <div class="col-md-6">
+                                        <input type="hidden" id="idCautelaMaterial">
+                                        <div class="card card-body">
+                                            <div
+                                                class="card-header bg-warning text-dark">
+                                                Vincular Funcionário a
+                                                Equipamento
+                                            </div>
+
+                                            <div class="row">
+                                                <!-- Coluna da esquerda (3 campos) -->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="funcionarioVinculo"
+                                                            class="form-label">Funcionário</label>
+                                                        <input
+                                                            list="listaFuncionarios"
+                                                            class="form-control"
+                                                            id="funcionarioVinculo"
+                                                            placeholder="Digite o nome do funcionário">
+                                                        <datalist
+                                                            id="listaFuncionarios"></datalist>
+
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label
+                                                            for="nomeEquipamentoCautelado"
+                                                            class="form-label">Equipamento</label>
+                                                        <input
+                                                            list="listaEquipamentos"
+                                                            class="form-control nome-equipamento-cautelado"
+                                                            placeholder="Digite ou selecione">
+                                                        <datalist
+                                                            id="listaEquipamentos">
+                                                            <option
+                                                                value="Multímetro Fluke"
+                                                                data-id="10">
+                                                                <option
+                                                                    value="Lanterna LED"
+                                                                    data-id="11">
+                                                                </datalist>
+                                                            </div>
+
+                                                            <div class="mb-3">
+                                                                <label
+                                                                    for="quantidadeCautela"
+                                                                    class="form-label">Quantidade</label>
+                                                                <input
+                                                                    type="number"
+                                                                    class="form-control"
+                                                                    id="quantidadeCautela"
+                                                                    placeholder="Ex: 50">
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Coluna da direita (2 campos) -->
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label
+                                                                    for="dataCautelaVinculo"
+                                                                    class="form-label">Data
+                                                                    de
+                                                                    Cautela</label>
+                                                                <input
+                                                                    type="date"
+                                                                    class="form-control"
+                                                                    id="dataCautelaVinculo">
+                                                            </div>
+                                                            <div
+                                                                class="col-md-6">
+                                                                <label
+                                                                    for="statusCautela"
+                                                                    class="form-label">Status</label>
+                                                                <select
+                                                                    class="form-select"
+                                                                    id="statusCautela">
+                                                                    <option
+                                                                        value>Selecione</option>
+                                                                    <option
+                                                                        value="Ativo">Ativo</option>
+                                                                    <option
+                                                                        value="Utilizado">Descautelado</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="mb-3">
+                                                                <label
+                                                                    for="observacoes"
+                                                                    class="form-label">Observações</label>
+                                                                <textarea
+                                                                    class="form-control"
+                                                                    id="observacoes"
+                                                                    rows="2"
+                                                                    placeholder="Informações adicionais sobre a requisição..."></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <button class="btn btn-primary m-3"
+                                        id="btnCadastroGeral">Cadastrar/Atualizar</button>
+                                    <button class="btn btn-secondary m-3"
+                                        onclick="limparFiltroCadastro()">Limpar
+                                        Campos</button>
+                                    <div class="tabela-wrapper">
+                                        <table
+                                            class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Qtd.</th>
+                                                    <th
+                                                        scope="col">Descrição</th>
+                                                    <th scope="col">Tip.
+                                                        Cont.</th>
+                                                    <th scope="col">Unidade
+                                                        Medida</th>
+                                                    <th scope="col">Valor
+                                                        Unitario</th>
+                                                    <th scope="col">Kardex</th>
+                                                    <th scope="col">Dt.
+                                                        Validade</th>
+                                                    <th scope="col">Tipo</th>
+                                                    <th scope="col">Status</th>
+
+                                                    <th scope="col">Embarque
+                                                        RT</th>
+                                                    <th scope="col">Dt.
+                                                        Embarque</th>
+                                                    <th scope="col">Plat.
+                                                        Origen</th>
+                                                    <th scope="col">Plat.
+                                                        Destino</th>
+                                                    <th scope="col">Cliente</th>
+
+                                                    <th scope="col">PS
+                                                        cautelado</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">1</th>
+                                                    <td>84</td>
+                                                    <td>Resina ht A</td>
+                                                    <td>Unidade</td>
+                                                    <td>1422,53</td>
+                                                    <td>1234002</td>
+                                                    <td>10/15/2025</td>
+                                                    <td>Resina</td>
+                                                    <td>Utilizado</td>
+
+                                                    <td>1234</td>
+                                                    <td>20/09/2025</td>
+                                                    <td>Base</td>
+                                                    <td>P-72</td>
+                                                    <td>Petrobras</td>
+
+                                                    <td>Jeferson</td>
+
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>

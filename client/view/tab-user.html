@@ -1,0 +1,169 @@
+<div class="card-grafico-filtro">
+    <div class="card w-75 mx-auto">
+        <div class="card-body">
+            <canvas id="meuGrafico" width="600" height="300"></canvas>
+        </div>
+    </div>
+
+    <!--   Filtro Funcioanrio/Plataforma   -->
+    <div class="card card-body">
+        <div class="card-header bg-primary text-white">
+            Filtros/Funcionario
+        </div>
+        <!-- Campo de busca -->
+        <div class="mb-2">
+            <label for="busca" class="form-label">Buscar por Nome</label>
+            <input type="text" class="form-control" id="busca"
+                placeholder="Digite o Nome">
+        </div>
+
+        <!-- Select de categoria -->
+        <div class="mb-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status">
+                <option value>Todas</option>
+                <option value="Embarcado">Embarcado</option>
+                <option value="Folga">Folga</option>
+                <option value="Férias">Férias</option>
+                <option value="Disponivel">Disponivel</option>
+
+            </select>
+        </div>
+
+        <!-- Checkbox -->
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="base">
+            <label class="form-check-label" for="base">
+                Mostrar em Base
+            </label>
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="tempoReal">
+            <label class="form-check-label" for="tempoReal">
+                Mostrar em Tempo Real
+            </label>
+        </div>
+
+        <!-- Dropdown -->
+        <div class="mb-2">
+            <label for="Unidade" class="form-label">Unidade</label>
+            <select class="form-select" id="Unidade">
+                <option value>Todas</option>
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label for="buscaDtEmb" class="form-label">Data de Embarque</label>
+            <input type="date" class="form-control" id="buscaDtEmb">
+        </div>
+        <div class="mb-2">
+            <button class="btn btn-primary" id="btnAplicarFiltros">Aplicar
+                filtros</button>
+            <button class="btn btn-secondary"
+                onclick="limparfiltroTabelaUser()">Limpar
+                Filtro</button>
+        </div>
+    </div>
+</div>
+<div class="card-grafico-filtro">
+    <div class="tabela-wrapper tab-user">
+        <!-- Botão de aplicar -->
+        <h2>Tab</h2>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Técnico</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Contato</th>
+                    <th scope="col">Dt. Embarque</th>
+                    <th scope="col">Plat. Origen</th>
+                    <th scope="col">Plat. Destino</th>
+                    <th scope="col">Descrição</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <!-- Card Funcionário -->
+    <div class="col-md-3">
+        <div class="card card-body">
+            <div
+                class="card-header bg-info text-white">
+                Cadastro de Funcionário
+            </div>
+
+            <!-- Nome do Funcionário -->
+            <div class="mb-2">
+                <label
+                    for="nomeFuncionario"
+                    class="form-label">Funcionário</label>
+                <input
+                    list="listaFuncionarios"
+                    class="form-control"
+                    id="nomeFuncionario"
+                    placeholder="Digite o nome do funcionário">
+                <datalist
+                    id="listaFuncionarios"></datalist>
+
+            </div>
+
+            <!-- Cargo -->
+            <div class="mb-2">
+                <label for="contato"
+                    class="form-label">Contato</label>
+                <input type="text"
+                    class="form-control"
+                    id="contato"
+                    placeholder="Ex: Email/Numero">
+            </div>
+
+            <!-- Status -->
+            <div class="mb-2">
+                <label for="statusFuncionario"
+                    class="form-label">Status</label>
+                <select class="form-select"
+                    id="statusFuncionario">
+                    <option
+                        value>Selecione</option>
+                    <option
+                        value="Ativo">Disponivel</option>
+                    <option
+                        value="Embarcado">Embarcado</option>
+                    <option
+                        value="Folga">Folga</option>
+                    <option
+                        value="Férias">Férias</option>
+                </select>
+                <div class="mb-2">
+                    <label for="UnidadeEmbTecnico"
+                        class="form-label">Unidade</label>
+                    <select class="form-select" id="UnidadeEmbTecnico">
+                        <option value>Todas</option>
+                    </select>
+                </div>
+
+                <div class="mb-2">
+                    <label for="dtEmbTecnico" class="form-label">Data de
+                        Embarque</label>
+                    <input type="date" class="form-control" id="dtEmbTecnico">
+                </div>
+                <div class="mb-2">
+                    <label for="observacoes"
+                        class="form-label">Observações</label>
+                    <textarea class="form-control" id="observacoes" rows="2"
+                        placeholder="Informações adicionais sobre a Embarque do Tecnico..."></textarea>
+                </div>
+                <button class="btn btn-danger m-2" id="btnDelete">Deletar
+                    Embarque</button>
+                <button class="btn btn-primary m-2"
+                    id="btnCadastroGeral">Cadastrar/Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>

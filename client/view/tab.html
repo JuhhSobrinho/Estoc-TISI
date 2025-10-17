@@ -1,0 +1,155 @@
+<div class="card-grafico-filtro">
+    <div class="card w-75 mx-auto">
+        <div class="card-body">
+            <canvas id="meuGrafico" width="600" height="300"></canvas>
+        </div>
+    </div>
+
+    <!-- Filtro/MAterial -->
+
+    <div class="card card-body">
+        <div class="card-header bg-primary text-white">
+            Filtros/Material
+        </div>
+        <!-- Campo de busca -->
+        <div class="mb-3">
+            <label for="busca" class="form-label">Buscar por nome</label>
+            <input type="text" class="form-control" id="busca"
+                placeholder="Digite o nome...">
+        </div>
+        <div class="mb-3">
+            <label for="buscaKd" class="form-label">Buscar por
+                Lote/Kardex</label>
+            <input type="text" class="form-control" id="buscaKd"
+                placeholder="Digite o Kardex...">
+        </div>
+
+        <!-- Select de categoria -->
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status">
+                <option value>Todas</option>
+                <option value="Utilizado">Utilizado</option>
+                <option value="N. Utilizado">N. Utilizado</option>
+                <option value="Retornado">Retornado</option>
+            </select>
+        </div>
+
+        <!-- Checkbox -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="vencidos">
+            <label class="form-check-label" for="vencidos">
+                Mostrar vencidos
+            </label>
+        </div>
+
+        <!-- Dropdown -->
+        <div class="mb-3">
+            <label for="tipo" class="form-label">Tipos</label>
+            <select class="form-select" id="tipo">
+                <option value>Todas</option>
+                <option value="Químico">Quimico</option>
+                <option value="Resina">Resina</option>
+                <option value="Fibra">Fibra</option>
+                <option value="Equipamento">Equipamento</option>
+            </select>
+        </div>
+    </div>
+    <!--   Filtro Embarque/Plataforma   -->
+    <div class="card card-body">
+        <div class="card-header bg-primary text-white">
+            Filtros/Embarque
+        </div>
+        <!-- Campo de busca -->
+        <div class="mb-3">
+            <label for="buscaRT" class="form-label">Buscar por RT
+                Embarque</label>
+            <input type="text" class="form-control" id="buscaRT"
+                placeholder="Digite o RT...">
+        </div>
+
+        <!-- Select de categoria -->
+        <div class="mb-3">
+            <label for="cliente" class="form-label">Cliente</label>
+            <select class="form-select" id="cliente">
+                <option value>Todos</option>
+            </select>
+        </div>
+
+        <!-- Checkbox -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="base">
+            <label class="form-check-label" for="base">
+                Mostrar em Base
+            </label>
+        </div>
+
+        <!-- Dropdown -->
+        <div class="mb-3">
+            <label for="Unidade" class="form-label">Unidade</label>
+            <select class="form-select" id="Unidade">
+                <option value>Todas</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="buscaDtEmb" class="form-label">Data de Embarque</label>
+            <input type="date" class="form-control" id="buscaDtEmb">
+        </div>
+
+    </div>
+</div>
+<!-- Botão de aplicar -->
+<button class="btn btn-primary" id="btnAplicarFiltros">Aplicar
+    filtros</button>
+<button class="btn btn-secondary" onclick="limparFiltroTabela()">Limpar
+    Filtro</button>
+
+<h2>Tab</h2>
+<div class="tabela-wrapper">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Qtd.</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Tip. Cont.</th>
+                <th scope="col">Unidade. Medida</th>
+                <th scope="col">Valor Unitario</th>
+                <th scope="col">Kardex</th>
+                <th scope="col">Dt. Validade</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Status</th>
+
+                <th scope="col">Embarque RT</th>
+                <th scope="col">Dt. Embarque</th>
+                <th scope="col">Plat. Origen</th>
+                <th scope="col">Plat. Destino</th>
+                <th scope="col">Cliente</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">0</th>
+                <td>00</td>
+                <td>Descrição</td>
+                <td>Unidade</td>
+                <td>000kg</td>
+                <td>0.000,00</td>
+                <td>1111111</td>
+                <td>00/00/0000</td>
+                <td>Tipo</td>
+                <td>Utilizado</td>
+
+                <td>1234</td>
+                <td>00/00/0000</td>
+                <td>Origen</td>
+                <td>Destino</td>
+                <td>Cliente</td>
+
+            </tr>
+
+        </tbody>
+    </table>
+</div>

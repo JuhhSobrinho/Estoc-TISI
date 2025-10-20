@@ -1,6 +1,5 @@
 
 export function adicionarMaterial() {
-    console.log("testttttttttttttt");
 
     if (!validarQuantidades()) return;
 
@@ -32,7 +31,61 @@ export function adicionarMaterial() {
     console.log("teste");
 }
 
-export function inicializarFormularioDeRequisicao() {
+
+
+
+
+
+
+
+
+
+
+async function buscarIdPlataforma(nome) {
+    const res = await fetch(`/plataformas/buscar?nome=${encodeURIComponent(nome)}`);
+    const plataforma = await res.json();
+    return plataforma.id_plat; // ← ajuste conforme o nome do campo
+}
+
+
+
+
+
+
+
+
+
+
+
+
+export async function inicializarFormularioDeRequisicao() {
+
+
+    fetch('/plataformas')
+        .then(res => res.json())
+        .then(plataformas => {
+            const selectOrigem = document.getElementById('origem');
+            const selectDestino = document.getElementById('destino');
+
+            // Limpa opções antigas
+            selectOrigem.innerHTML = '<option value="">Selecione</option>';
+            selectDestino.innerHTML = '<option value="">Selecione</option>';
+
+            // Adiciona opções vindas do banco
+            plataformas.forEach(p => {
+                const opcaoOrigem = document.createElement('option');
+                opcaoOrigem.value = p.nome_plat;
+                opcaoOrigem.textContent = p.nome_plat;
+                selectOrigem.appendChild(opcaoOrigem);
+
+                const opcaoDestino = document.createElement('option');
+                opcaoDestino.value = p.nome_plat;
+                opcaoDestino.textContent = p.nome_plat;
+                selectDestino.appendChild(opcaoDestino);
+            });
+        })
+        .catch(err => console.error('❌ Erro ao carregar plataformas:', err));
+
     const botao = document.getElementById("btnAdicionarMaterial");
     if (botao) {
         botao.addEventListener("click", adicionarMaterial);
@@ -65,24 +118,27 @@ export function inicializarFormularioDeRequisicao() {
             select.innerHTML = '<option value="">Selecione</option>';
             materiais.forEach(mat => {
                 const nome = mat.material.nome_material;
-                materiaisMapeados[nome] = {
+                const chave = mat.id_mat_emb; // 👈 usar id_mat_emb como chave única
+
+                materiaisMapeados[chave] = {
                     ...mat.material,
-                    quantidadeDisponivel: mat.quantidade
+                    quantidadeDisponivel: mat.quantidade,
+                    id_mat_emb: mat.id_mat_emb
                 };
 
-
                 const option = document.createElement("option");
-                option.value = nome;
-                option.textContent = nome;
+                option.value = chave; // 👈 value agora é o id_mat_emb
+                option.textContent = `${nome} (Qtd: ${mat.quantidade})`; // opcional: mostrar qtd no texto
                 select.appendChild(option);
             });
         });
     }
 
+
     document.addEventListener("change", function (e) {
         if (e.target.matches('select[name="material[]"]')) {
-            const nomeSelecionado = e.target.value;
-            const dados = materiaisMapeados[nomeSelecionado];
+            const chaveSelecionada = e.target.value; // agora é id_mat_emb
+            const dados = materiaisMapeados[chaveSelecionada];
             if (!dados) return;
 
             const container = e.target.closest('.material-item');
@@ -99,6 +155,7 @@ export function inicializarFormularioDeRequisicao() {
     });
 
 
+
     document.getElementById("btnSalvarRequisicao").addEventListener("click", async function (e) {
         if (!validarQuantidades()) {
             e.preventDefault();
@@ -113,22 +170,34 @@ export function inicializarFormularioDeRequisicao() {
         const destino = document.getElementById("destino").value;
 
         // 2. Buscar embarque correspondente (ex: via fetch ou já ter o ID)
-        const id_embarque = await buscarOuCriarEmbarque(origem, destino); // ← você pode implementar isso
+
+        const idOrigem = await buscarIdPlataforma(origem);
+        const idDestino = await buscarIdPlataforma(destino);
+
+        console.log("IDs das plataformas:", idOrigem, idDestino);
+
+
+        const id_embarque = await buscarOuCriarEmbarque(idOrigem, idDestino); // ← você pode implementar isso
+
+
+        console.log("catatatu", id_embarque);
 
         // 3. Captura dos materiais
         const materiais = [];
         document.querySelectorAll(".material-item").forEach(item => {
-            const nome = item.querySelector('select[name="material[]"]').value;
+            const chaveSelecionada = item.querySelector('select[name="material[]"]').value;
             const qtd = parseFloat(item.querySelector('input[name="quantidade[]"]').value);
 
-            const dados = materiaisMapeados[nome];
+            const dados = materiaisMapeados[chaveSelecionada];
             if (dados && qtd > 0) {
                 materiais.push({
+                    id_mat_emb: dados.id_mat_emb,
                     id_material: dados.id_mat,
                     qtd_mat: qtd
                 });
             }
         });
+
 
         // 4. Envio via fetch
         try {
@@ -163,10 +232,11 @@ export function inicializarFormularioDeRequisicao() {
 }
 
 
+
 async function buscarOuCriarEmbarque(origem, destino) {
     try {
-        console.log(origem,destino);
-        
+        console.log(origem, destino);
+
         const resBusca = await fetch(`/embarque/buscar?origem=${encodeURIComponent(origem)}&destino=${encodeURIComponent(destino)}`);
         const embarque = await resBusca.json();
 

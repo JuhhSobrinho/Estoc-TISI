@@ -6,6 +6,7 @@ import { iniciarConferenciaMaterial } from "./componenteFormVer.js";
 import { geral } from "./componentesFuncEmb.js";
 
 
+let idFormSelecionado = null;
 
 
 async function carregarMenuFormularios() {
@@ -14,9 +15,6 @@ async function carregarMenuFormularios() {
 
   const menu = document.querySelector('#sidebar ul.nav');
 
-  // Separador visual
-  const hr = document.createElement('hr');
-  menu.appendChild(hr);
 
   formularios.forEach(form => {
     const li = document.createElement('li');
@@ -24,15 +22,24 @@ async function carregarMenuFormularios() {
 
     const link = document.createElement('a');
     link.className = 'nav-link text-white';
-    link.href = `./formVer.html?id=${form.id_form}`;
+    link.dataset.pagina = `./formVer.html?id=${form.id_form}`;
+    link.href = "#";
     link.innerHTML = `
-      <i class="bi bi-input-cursor"></i>
-      <span class="text-label">${form.nome_form}</span>
-    `;
+    <i class="bi bi-input-cursor"></i>
+    <span class="text-label">${form.nome_form}</span>
+  `;
 
     li.appendChild(link);
     menu.appendChild(li);
+
+    // 🔑 adiciona o listener aqui também
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const pagina = link.getAttribute('data-pagina');
+      carregarConteudo(pagina);
+    });
   });
+
 }
 
 carregarMenuFormularios();
@@ -98,61 +105,51 @@ function coletarDadosGlobais() {
 
 
 
+
+
+
 function carregarConteudo(pagina) {
-  fetch(pagina)
+  const url = new URL(pagina, window.location.origin);
+  const id = url.searchParams.get("id");
+
+  fetch(pagina) // ← aqui é a diferença!
     .then(res => res.text())
     .then(html => {
       document.getElementById('conteudo').innerHTML = html;
 
-      // Chama o gráfico da aba Tab
-      if (pagina === './tab.html') {
-        coletarDadosGlobais(); // garante que os dados estejam atualizados
-        montarGrafico(dadosCompartilhados); // ✅ passa os dados
-      }
+      setTimeout(() => {
+        if (pagina.includes('tab.html')) {
+          coletarDadosGlobais();
+          montarGrafico(dadosCompartilhados);
+        }
+        else if (pagina.includes('grafico.html')) {
+          montarTabGrafico()
+            .then(() => {
+              coletarDadosGlobais();
+              listarGraficos(dadosCompartilhados);
+            });
+        }
+        else if (pagina.includes('tab-user.html')) {
+          geral();
+        }
+        else if (pagina.includes('cadastro.html')) {
+          montarTab();
+        }
+        else if (pagina.includes('form.html')) {
+          inicializarFormularioDeRequisicao();
+        }
+        else if (pagina.includes('formVer.html')) {
+          const id = new URL(pagina, window.location.origin).searchParams.get("id");
+          iniciarConferenciaMaterial(id);
+        }
 
 
-      // Chama os gráficos da aba Grafico
-      else if (pagina === './grafico.html') {
-        console.log("grafico");
-
-        montarTabGrafico()
-          .then(() => {
-            // Coleta os dados globais após montar a tabela
-            coletarDadosGlobais();
-
-            // Passa os dados globais para listarGraficos
-            listarGraficos(dadosCompartilhados);
-          })
-          .catch(err => {
-            console.error("Erro ao carregar gráficos:", err);
-          });
-      }
-
-      else if (pagina === './tab-user.html') {
-        geral(); // chama tudo de uma vez, na ordem certa
-      }
-
-
-
-
-
-      // Chama os editar da aba Cadastro
-      else if (pagina === './cadastro.html') {
-        console.log("Cadastro");
-        montarTab();
-      }
-
-      else if (pagina === './form.html') {
-        console.log("form");
-        inicializarFormularioDeRequisicao();
-      }
-
-      else if (pagina === './formVer.html') {
-        console.log("formVer");
-        iniciarConferenciaMaterial();
-      }
-    });
+      }, 100);
+    })
+    .catch(err => console.error("❌ Erro ao carregar conteúdo:", err));
 }
+
+
 
 window.limparFiltroGrafico = function () {
   carregarConteudo('./grafico.html');
@@ -183,16 +180,14 @@ function toggleSidebar() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Links do menu com atributo data-pagina
   document.querySelectorAll('[data-pagina]').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
       const pagina = link.getAttribute('data-pagina');
-      carregarConteudo(pagina);
+      carregarConteudo(pagina); // passa a URL completa (com ?id=...)
     });
   });
 
-  // Botão de toggle do sidebar
   const btn = document.querySelector('#btnToggleSidebar');
   if (btn) {
     btn.addEventListener('click', toggleSidebar);

@@ -16,8 +16,13 @@ exports.buscarEmbarque = async (req, res) => {
 
 exports.criarEmbarque = async (req, res) => {
     const { origem, destino } = req.body;
-    console.log("📦 Criando embarque com:", origem, destino);
 
+    console.log(origem, destino);
+    
+
+    if (!origem || !destino || isNaN(origem) || isNaN(destino)) {
+        return res.status(400).json({ error: 'IDs inválidos de origem ou destino.' });
+    }
 
     const { data, error } = await supabase
         .from('embarque')
@@ -28,6 +33,11 @@ exports.criarEmbarque = async (req, res) => {
         .select('id_emb')
         .single();
 
-    if (error || !data) return res.status(500).json({ error: 'Erro ao criar embarque' });
+    if (error || !data) {
+        console.error("❌ Erro ao criar embarque:", error);
+        return res.status(500).json({ error: 'Erro ao criar embarque' });
+    }
+
     res.json(data);
 };
+

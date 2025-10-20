@@ -155,6 +155,26 @@
 
 
 
+    .line-splash {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #0d6efd, #00d9ff);
+        border-radius: 2px;
+        margin-top: 10px;
+        animation: growLine 1s ease-in-out forwards;
+    }
+
+    @keyframes growLine {
+        from {
+            width: 0;
+        }
+
+        to {
+            width: 80px;
+        }
+    }
+
+
 
 
     @media print {

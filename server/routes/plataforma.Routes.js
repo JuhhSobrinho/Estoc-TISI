@@ -4,5 +4,6 @@ const plataformaController = require('../controller/plataformaController');
 
 router.get('/', plataformaController.getPlataformas);
 router.post('/', plataformaController.cadastrarPlataforma);
+router.get('/buscar', plataformaController.buscarPlataformaPorNome);
 
 module.exports = router;

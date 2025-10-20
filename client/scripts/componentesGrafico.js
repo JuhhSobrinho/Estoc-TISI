@@ -376,7 +376,7 @@ export function listarGraficos(dados) {
   const vencer = document.getElementById('meuGraficoVencer');
   if (vencer) {
     // Filtrar apenas os itens com validade definida
-    const dadosComValidade = dados.filter(d => d.validade);
+    const dadosComValidade = dados.filter(d => d.validade && d.status !== "Utilizado");
 
     // Ordenar os dados por validade (opcional)
     dadosComValidade.sort((a, b) => new Date(a.validade) - new Date(b.validade));
@@ -467,8 +467,8 @@ export function listarGraficos(dados) {
         datasets: [{
           label: 'Baixo Estoque (Unidade Base)',
           data: valores,
-          backgroundColor: labels.map((_, i) => `hsl(${i * 40}, 70%, 60%)`),
-          borderColor: labels.map((_, i) => `hsl(${i * 40}, 70%, 40%)`),
+          backgroundColor: labels.map((_, i) => i % 2 === 0 ? 'rgba(54, 162, 235, 0.7)' : 'rgba(54, 162, 235, 0.3)'),
+          borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 1
         }]
       },

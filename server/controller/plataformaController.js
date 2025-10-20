@@ -42,3 +42,23 @@ exports.cadastrarPlataforma = async (req, res) => {
     res.status(500).json({ error: 'Erro ao cadastrar plataforma' });
   }
 };
+
+
+exports.buscarPlataformaPorNome = async (req, res) => {
+  const { nome } = req.query;
+
+  if (!nome) {
+    return res.status(400).json({ error: 'Nome da plataforma não informado.' });
+  }
+
+  const { data, error } = await supabase
+    .from('plataforma')
+    .select('id_plat, nome_plat')
+    .ilike('nome_plat', nome) // busca ignorando maiúsculas/minúsculas
+
+  if (error || !data || data.length === 0) {
+    return res.status(404).json({ error: 'Plataforma não encontrada.' });
+  }
+
+  res.json(data[0]); // retorna a primeira encontrada
+};

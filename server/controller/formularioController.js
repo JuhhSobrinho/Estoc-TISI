@@ -74,6 +74,7 @@ exports.getFormulario = async (req, res) => {
       description,
       aprovado,
       qtd_mat,
+      dt_form,
       funcionario (
         id_func,
         nome_func
@@ -129,6 +130,16 @@ exports.getFormularioId = async (req, res) => {
     aprovado,
     id_funcionario,
     id_embarque,
+    embarque: id_embarque (
+      plataforma_origem:plataforma_origem_id_emb (
+        nome_plat,
+        cliente_plat
+      ),
+      plataforma_destino:plataforma_destino_id_emb (
+        nome_plat
+      )
+    ),
+    dt_form,
     item_formulario (
       id_form_item,
       qtd_mat,

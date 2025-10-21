@@ -5,6 +5,11 @@
     }
 
 
+    td.vencido {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
 
 
     #sidebar {
@@ -223,5 +228,80 @@
 
         p {
             margin: 4px 0;
+        }
+    }
+
+
+    /* Responsividade para telas menores */
+    @media (max-width: 768px) {
+
+        /* Sidebar ocupa largura total no mobile */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px !important;
+            /* um pouco mais largo para caber texto */
+            height: 100%;
+            z-index: 1050;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar.show {
+            transform: translateX(0);
+        }
+
+        /* Conteúdo ocupa toda largura quando sidebar está escondida */
+        #conteudo {
+            padding: 10px;
+            margin-left: 0;
+        }
+
+        /* Cards em coluna única */
+        .guia-grafico .card,
+        .row .col-md-4 {
+            flex: 1 1 100%;
+            max-width: 100%;
+        }
+
+        /* Tabelas com rolagem horizontal */
+        .tabela-wrapper {
+            max-height: none;
+            overflow-x: auto;
+        }
+
+        .tabela-wrapper table {
+            font-size: 12px;
+            /* fonte menor para caber melhor */
+        }
+
+        /* Ajusta cabeçalhos */
+        h1,
+        h2,
+        h5 {
+            font-size: 1.2rem;
+        }
+
+        p {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+
+        /* Ainda mais compacto em celulares muito pequenos */
+        #sidebar {
+            width: 180px;
+        }
+
+        .table td,
+        .table th {
+            padding: 4px;
+            font-size: 11px;
+        }
+
+        .card-body {
+            padding: 10px;
         }
     }

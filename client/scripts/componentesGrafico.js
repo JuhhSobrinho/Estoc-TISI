@@ -1,5 +1,5 @@
 export let graficoVendas, graficoVencer, graficoBaixoEstoque, graficoPlatUtilizados, graficoPlatNUtilizados, graficoPrinMatBaixoIndicie;
-
+let plataformaSelecionada = null;
 
 
 export function montarTabGrafico() {
@@ -16,31 +16,41 @@ export function montarTabGrafico() {
         const emb = item.embarque;
         const tipo = mat.tipo;
 
-        const validadeFormatada = mat.data_validade_mat
-          ? parseISODateLocal(mat.data_validade_mat).toLocaleDateString()
-          : '—';
+        const validadeISO = mat.data_validade_mat || null;
+        const validadeFormatada = validadeISO ? parseISODateLocal(validadeISO).toLocaleDateString() : '—';
         const datEmbarque = item.data_mat_emb
           ? parseISODateLocal(item.data_mat_emb).toLocaleDateString()
           : '—';
 
+
+        let classeValidade = '';
+        if (validadeISO) {
+          const hoje = new Date();
+          const dtVal = new Date(validadeISO);
+          if (dtVal < hoje) {
+            classeValidade = 'vencido'; // 👈 classe CSS que vamos criar
+          }
+        }
         const row = document.createElement('tr');
         row.innerHTML = `
-          <th scope="row">${index + 1}</th>
-          <td>${mat.qtd_mat}</td>
-          <td>${mat.nome_material}</td>
-          <td>${mat.tipo_contagem_mat}</td>
-          <td>${mat.unidade_medida}</td>
-          <td>${mat.valor_unidade_mat.toFixed(2)}</td>
-          <td>${mat.kardex_mat}</td>
-          <td>${validadeFormatada}</td>
-          <td>${tipo.description_tip}</td>
-          <td>${mat.status_mat}</td>
-          <td>${item.rt_emb}</td>
-          <td>${datEmbarque}</td>
-          <td>${emb.plataforma_origem.nome_plat}</td>
-          <td>${emb.plataforma_destino.nome_plat}</td>
-          <td>${emb.plataforma_origem.cliente_plat}</td>
-        `;
+  <th scope="row">${index + 1}</th>
+  <td>${mat.qtd_mat}</td>
+  <td>${mat.nome_material}</td>
+  <td>${mat.tipo_contagem_mat}</td>
+  <td>${mat.unidade_medida}</td>
+  <td>${mat.valor_unidade_mat.toFixed(2)}</td>
+  <td>${mat.kardex_mat}</td>
+  <td data-validade-iso="${validadeISO || ''}" class="${classeValidade}">
+    ${validadeFormatada}
+  </td>
+  <td>${tipo.description_tip}</td>
+  <td>${mat.status_mat}</td>
+  <td>${item.rt_emb}</td>
+  <td>${datEmbarque}</td>
+  <td>${emb.plataforma_origem.nome_plat}</td>
+  <td>${emb.plataforma_destino.nome_plat}</td>
+  <td>${emb.plataforma_origem.cliente_plat}</td>
+`;
         tbody.appendChild(row);
       });
 
@@ -71,12 +81,14 @@ export function coletarDadosTabela() {
     const status = colunas[8]?.textContent.trim();
     const platOrigen = colunas[11]?.textContent.trim();
     const platDestino = colunas[12]?.textContent.trim();
-    const validadeStr = colunas[6]?.textContent.trim();
-    const validade = validadeStr ? parseUSDateToISO(validadeStr) : null;
+    const validadeCell = colunas[6];
+    const validadeISO = validadeCell?.getAttribute('data-validade-iso')?.trim();
+    const validade = validadeISO || null;
+
 
     const rtEmbarque = colunas[9]?.textContent.trim();     // Embarque RT
     const dtEmbarqueStr = colunas[10]?.textContent.trim();     // Embarque RT
-    const dtEmbarque = dtEmbarqueStr ? parseUSDateToISO(dtEmbarqueStr) : null;     // Embarque RT
+    const dtEmbarque = dtEmbarqueStr ? parseBRDateToISO(dtEmbarqueStr) : null;     // Embarque RT
     const cliente = colunas[13]?.textContent.trim();         // Tip. Cont. (ou ajuste se cliente estiver em outra coluna)
 
 
@@ -107,6 +119,13 @@ export function coletarDadosTabela() {
 function parseUSDateToISO(str) {
   // "MM/dd/yyyy" -> "yyyy-MM-dd"
   const [mes, dia, ano] = str.split('/');
+  return `${ano}-${mes}-${dia}`;
+}
+
+
+function parseBRDateToISO(str) {
+  // "dd/MM/yyyy" -> "yyyy-MM-dd"
+  const [dia, mes, ano] = str.split('/');
   return `${ano}-${mes}-${dia}`;
 }
 
@@ -304,32 +323,52 @@ function normalizarDataBR(dataStr) {
 function atualizarTodosGraficos() {
   const dados = coletarDadosTabela();
 
-  // Atualiza gráfico de validade
-  if (graficoVencer) {
-    const dadosComValidade = dados.filter(d => d.validade);
-    dadosComValidade.sort((a, b) => new Date(a.validade) - new Date(b.validade));
+  console.log(dados, "dados da tabela");
 
-    const dadosGrafico = dadosComValidade.map(d => ({
-      x: d.descricao,
-      y: new Date(normalizarDataBR(d.validade))
-    }));
-
-
-
-    const datasSomente = dadosComValidade.map(d => new Date(d.validade));
-    const minData = new Date(normalizarDataBR(Math.min(...datasSomente)));
-    const maxData = new Date(normalizarDataBR(Math.max(...datasSomente)));
-
-    graficoVencer.data.datasets[0].data = dadosGrafico;
-    graficoVencer.options.scales.y.min = minData;
-    graficoVencer.options.scales.y.max = maxData;
-    graficoVencer.update();
+  // 🔎 Se houver plataformaSelecionada, filtra só ela
+  let dadosFiltrados = dados;
+  if (plataformaSelecionada) {
+    dadosFiltrados = dados.filter(d => d.platDestino === plataformaSelecionada);
   }
 
-  // Atualiza gráfico de baixo estoque
+  // Atualiza gráfico de validade
+  if (graficoVencer) {
+    const dadosComValidade = dadosFiltrados.filter(d => d.validade);
+
+    // Converte para Date e filtra inválidos
+    const pontos = dadosComValidade
+      .map(d => {
+        const dt = new Date(d.validade); // d.validade em "yyyy-MM-dd"
+        return (dt instanceof Date && !isNaN(dt)) ? { x: d.descricao, y: dt } : null;
+      })
+      .filter(Boolean);
+
+    const datasValidas = pontos.map(p => p.y);
+    if (datasValidas.length > 0) {
+      const hoje = new Date();
+      const inicioAno = new Date(hoje.getFullYear(), 0, 1);
+
+      const minData = new Date(Math.min(...datasValidas));
+      const maxData = new Date(Math.max(...datasValidas));
+      const minFinal = minData < inicioAno ? inicioAno : minData;
+
+      graficoVencer.data.datasets[0].data = pontos;
+      graficoVencer.options.scales.y.min = minFinal;
+      graficoVencer.options.scales.y.max = maxData;
+      graficoVencer.update();
+    } else {
+      // Se não há datas válidas, evita cair para 1970
+      graficoVencer.data.datasets[0].data = [];
+      graficoVencer.options.scales.y.min = undefined;
+      graficoVencer.options.scales.y.max = undefined;
+      graficoVencer.update();
+    }
+  }
+
+  // Atualiza gráfico de baixo estoque (mantém igual)
   if (graficoBaixoEstoque) {
     const agrupado = {};
-    dados.forEach(d => {
+    dadosFiltrados.forEach(d => {
       if (d.platDestino === "BASE") {
         agrupado[d.descricao] = (agrupado[d.descricao] || 0) + d.quantidade;
       }
@@ -342,9 +381,9 @@ function atualizarTodosGraficos() {
     graficoBaixoEstoque.data.datasets[0].data = valores;
     graficoBaixoEstoque.update();
   }
-
-  // Você pode adicionar outros gráficos aqui também
 }
+
+
 
 
 
@@ -373,15 +412,18 @@ function parseISODateLocal(isoDateStr) {
 export function listarGraficos(dados) {
 
   // --- Materiais a vencer ---
+  // --- Materiais a vencer ---
   const vencer = document.getElementById('meuGraficoVencer');
   if (vencer) {
-    // Filtrar apenas os itens com validade definida
-    const dadosComValidade = dados.filter(d => d.validade && d.status !== "Utilizado");
+    let dadosComValidade = dados.filter(d => d.validade && d.status !== "Utilizado");
 
-    // Ordenar os dados por validade (opcional)
+    // 👇 se já tem plataforma selecionada, filtra só ela
+    if (plataformaSelecionada) {
+      dadosComValidade = dadosComValidade.filter(d => d.platDestino === plataformaSelecionada);
+    }
+
     dadosComValidade.sort((a, b) => new Date(a.validade) - new Date(b.validade));
 
-    // Preparar os dados para o gráfico: {x: descricao, y: data de validade}
     const dadosGrafico = dadosComValidade.map(d => ({
       x: d.descricao,
       y: new Date(d.validade)
@@ -409,35 +451,55 @@ export function listarGraficos(dados) {
           if (elements.length > 0) {
             const index = elements[0].index;
             const descricaoSelecionada = graficoVencer.data.datasets[0].data[index].x;
-            aplicarFiltroPorDescricao(descricaoSelecionada);
+
+            const dados = coletarDadosTabela();
+
+            let filtrados = dados.filter(d =>
+              d.descricao === descricaoSelecionada &&
+              d.status !== "Utilizado"
+            );
+
+            if (plataformaSelecionada) {
+              filtrados = filtrados.filter(d => d.platDestino === plataformaSelecionada);
+            }
+
+            // Atualiza tabela
+            const linhas = document.querySelectorAll('table tbody tr');
+            linhas.forEach(linha => {
+              const cols = linha.querySelectorAll('td');
+              const descLinha = cols[1]?.textContent.trim();
+              const platDestino = cols[12]?.textContent.trim();
+              const mostrar = filtrados.some(d =>
+                d.descricao === descLinha &&
+                (!plataformaSelecionada || d.platDestino === plataformaSelecionada)
+              );
+              linha.style.display = mostrar ? '' : 'none';
+            });
+
+            // Atualiza gráfico de validade
+            const dadosGrafico = filtrados.map(d => ({
+              x: d.descricao,
+              y: new Date(d.validade)
+            }));
+
+            graficoVencer.data.datasets[0].data = dadosGrafico;
+            graficoVencer.update();
           }
         },
         scales: {
-          x: {
-            type: 'category',
-            title: {
-              display: true,
-              text: 'Descrição do Material'
-            }
-          },
+          x: { type: 'category', title: { display: true, text: 'Descrição do Material' } },
           y: {
             type: 'time',
-            time: {
-              unit: 'day',
-              tooltipFormat: 'dd/MM/yyyy',
-              displayFormats: { day: 'dd/MM/yyyy' }
-            },
-            min: minData, // define a data mínima do eixo
-            max: maxData, // define a data máxima do eixo
-            title: {
-              display: true,
-              text: 'Data de Validade'
-            }
+            time: { unit: 'day', tooltipFormat: 'dd/MM/yyyy', displayFormats: { day: 'dd/MM/yyyy' } },
+            min: minData,
+            max: maxData,
+            title: { display: true, text: 'Data de Validade' }
           }
         }
       }
     });
   }
+
 
   // --- Baixo estoque ---
   const baixoEstoque = document.getElementById('meuGraficoBaixoEstoque');
@@ -545,7 +607,6 @@ export function listarGraficos(dados) {
     const labels = Object.keys(agrupado); // Plataformas
     const valores = Object.values(agrupado); // Número de itens por plataforma
     let estadoGrafico = 'plataforma';
-    let plataformaSelecionada = null;
 
     graficoPlatUtilizados = new Chart(platUtilizados.getContext('2d'), {
       type: 'bar',
@@ -569,7 +630,7 @@ export function listarGraficos(dados) {
 
             if (estadoGrafico === 'plataforma') {
               plataformaSelecionada = label;
-              aplicarFiltroTabela(graficoPlatUtilizados, label, "N. Utilizado", "plataforma");
+              aplicarFiltroTabela(graficoPlatUtilizados, label, null, "plataforma");
               estadoGrafico = 'descricao';
             } else {
               aplicarFiltroTabelaCombinado(graficoPlatUtilizados, label, plataformaSelecionada, "N. Utilizado");
@@ -610,7 +671,7 @@ export function listarGraficos(dados) {
     const dados = coletarDadosTabela(); // retorna {descricao, quantidade, platDestino, status, ...}
 
     // Filtrar apenas os que têm status "N. Utilizados"
-    const naoUtilizados = dados.filter(d => d.status === `N. Utilizado`);
+    const naoUtilizados = dados.filter(d => d.status !== "Utilizado");
     console.log(naoUtilizados, "nao utilizados")
 
     // Agrupar por plataforma
@@ -626,7 +687,6 @@ export function listarGraficos(dados) {
     const labels = Object.keys(agrupado);
     const valores = Object.values(agrupado);
     let estadoGrafico = 'plataforma';
-    let plataformaSelecionada = null;
 
 
     graficoPlatNUtilizados = new Chart(platNUtilizados.getContext('2d'), {

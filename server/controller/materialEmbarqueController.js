@@ -148,12 +148,12 @@ exports.listarMateriaisPorPlataforma = async (req, res) => {
         data_validade_mat
       ),
       embarque (
-        plataforma_origem:plataforma_origem_id_emb (
+        plataforma_origem:plataforma_destino_id_emb (
           nome_plat
         )
       )
     `)
-    .eq('status_mat_emb', 'N. Utilizado');
+    .neq('status_mat_emb', 'Utilizado');
 
   if (error) {
     console.error("❌ Erro ao buscar materiais:", error);

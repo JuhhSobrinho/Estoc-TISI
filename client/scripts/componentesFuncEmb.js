@@ -94,7 +94,7 @@ export function geral() {
 
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                <th scope="row">${index + 1}</th>
+                <th scope="row" data-id="${item.id_func_emb}">${index + 1}</th>
                 <td>${funcionario?.nome_func || '—'}</td>
                 <td>${funcionario?.status_func || '—'}</td>
                 <td>${funcionario?.contato_func || '—'}</td>
@@ -340,11 +340,11 @@ export function geral() {
 
     function selecionarLinhaTabela() {
         const linhas = document.querySelectorAll("table tbody tr");
-        console.log("Linhas encontradas:", linhas.length); // Verifica se está pegando
 
         linhas.forEach(function (row) {
             row.addEventListener("click", function () {
-                console.log("Linha clicada!"); // Teste básico
+                const th = row.querySelector("th[scope='row']");
+                const idFuncEmb = th?.getAttribute("data-id"); // 👈 pega o id único
 
                 const colunas = row.querySelectorAll("td");
 
@@ -355,14 +355,16 @@ export function geral() {
                 const platDestino = colunas[5]?.textContent.trim();
                 const descricao = colunas[6]?.textContent.trim();
 
-                console.log("logzao", tecnico, status, contato);
-
+                // Preenche os inputs
                 document.getElementById("nomeFuncionario").value = tecnico;
                 document.getElementById("statusFuncionario").value = status;
                 document.getElementById("contato").value = contato;
                 document.getElementById("dtEmbTecnico").value = parseBRDateToISO(dtEmbarqueStr);
                 document.getElementById("UnidadeEmbTecnico").value = platDestino;
                 document.getElementById("observacoes").value = descricao;
+
+                // 👇 guarda o id único em um campo hidden
+                document.getElementById("idFuncEmb").value = idFuncEmb;
             });
         });
     }
@@ -374,41 +376,24 @@ export function geral() {
 
 
     document.getElementById("btnDelete").addEventListener("click", async () => {
-        const nome = document.getElementById("nomeFuncionario").value.trim();
-        const dtEmbarque = document.getElementById("dtEmbTecnico").value.trim();
+        const idFuncEmb = document.getElementById("idFuncEmb").value;
 
-        if (!nome || !dtEmbarque) {
-            alert("Preencha nome e data de embarque para deletar.");
+        if (!idFuncEmb) {
+            alert("Selecione uma linha antes de deletar.");
             return;
         }
 
         try {
-            // Verifica se o funcionário existe
-            const verificarRes = await fetch(`/funcionario/verificar?nome=${encodeURIComponent(nome)}`);
-            const funcionarioExiste = verificarRes.ok ? await verificarRes.json() : null;
-
-            if (!funcionarioExiste || !funcionarioExiste.id_func) {
-                alert("Funcionário não encontrado.");
-                return;
-            }
-
-            const idFuncionario = funcionarioExiste.id_func;
-
-            // Envia requisição para deletar embarque
             const res = await fetch("/funcionario-embarque/deletar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    id_funcionario: idFuncionario,
-                    dt_embarque: dtEmbarque
-                })
+                body: JSON.stringify({ id_func_emb: idFuncEmb })
             });
-
 
             if (!res.ok) throw new Error("Erro ao deletar embarque");
 
             alert("✅ Embarque deletado com sucesso!");
-            console.log("🗑️ Embarque deletado para funcionário:", idFuncionario);
+            console.log("🗑️ Embarque deletado:", idFuncEmb);
         } catch (err) {
             console.error("❌ Erro ao deletar embarque:", err);
             alert("Erro ao deletar embarque.");

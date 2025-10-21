@@ -15,11 +15,13 @@ export function iniciarConferenciaMaterial(id) {
 
       // Cabeçalho
       document.getElementById("relNomeRequisicao").textContent = dados.nome_form;
-      document.getElementById("relDataRequisicao").textContent = dados.description;
+      document.getElementById("relDataRequisicao").textContent = dados.dt_form;
       document.getElementById("relSolicitante").textContent = dados.id_funcionario;
-      document.getElementById("relOrigem").textContent = dados.id_embarque;
+      document.getElementById("relStatus").textContent = dados.aprovado ? "Aprovado" : "Pendente";
+      document.getElementById("relDestino").textContent = (dados.embarque.plataforma_origem.nome_plat)+'/'+(dados.embarque.plataforma_destino.nome_plat);
+
       destinoEmbarque = dados.id_embarque;
-      document.getElementById("relObservacoes").textContent = dados.aprovado ? "Aprovado" : "Pendente";
+      document.getElementById("relObservacoes").textContent = dados.description;
 
       // Itens
       const tbody = document.getElementById("tabelaRequisicao");

@@ -5,6 +5,7 @@ exports.listarFuncionarioEmbarques = async (req, res) => {
     const { data, error } = await supabase
       .from('funcionario_embarque')
       .select(`
+        id_func_emb,
         id_funcionario,
         funcionario (
           nome_func,
@@ -135,22 +136,22 @@ exports.criarFuncionarioEmbarque = async (req, res) => {
 
 
 exports.deletarFuncionarioEmbarque = async (req, res) => {
-  const { id_funcionario, dt_embarque } = req.body;
+  const { id_func_emb } = req.body; // 👈 agora só precisa do id único
 
-  if (!id_funcionario || !dt_embarque) {
-    return res.status(400).json({ error: 'Dados obrigatórios ausentes.' });
+  if (!id_func_emb) {
+    return res.status(400).json({ error: 'ID do embarque é obrigatório.' });
   }
 
   const { error } = await supabase
     .from('funcionario_embarque')
     .delete()
-    .eq('id_funcionario', id_funcionario)
-    .eq('dt_embarque', dt_embarque);
+    .eq('id_func_emb', id_func_emb); // 👈 deleta pelo identificador único
 
   if (error) {
     console.error("❌ Erro ao deletar embarque:", error);
     return res.status(500).json({ error: 'Erro ao deletar embarque' });
   }
 
-  res.status(200).json({ message: 'Embarque deletado com sucesso!' });
+  res.status(200).json({ message: '✅ Embarque deletado com sucesso!' });
 };
+

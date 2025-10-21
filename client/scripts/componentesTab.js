@@ -138,10 +138,18 @@ function aplicarFiltrosEGrafico() {
     // Atualiza a tabela visualmente
     const linhas = document.querySelectorAll('table tbody tr');
     linhas.forEach(linha => {
-        const descricaoLinha = linha.querySelectorAll('td')[1]?.textContent.trim().toLowerCase();
-        const mostrar = filtrados.some(d => d.descricao.toLowerCase() === descricaoLinha);
+        const cols = linha.querySelectorAll('td');
+        const descricaoLinha = cols[1]?.textContent.trim().toLowerCase();
+        const destinoLinha = cols[12]?.textContent.trim(); // coluna de platDestino
+
+        const mostrar = filtrados.some(d =>
+            d.descricao.toLowerCase() === descricaoLinha &&
+            d.platDestino === destinoLinha
+        );
+
         linha.style.display = mostrar ? '' : 'none';
     });
+
 
     // Atualiza o gráfico
     const canvas = document.getElementById('meuGrafico');
@@ -237,7 +245,7 @@ export function montarGrafico(dados) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <th scope="row">${index + 1}</th>
-                    <td>${mat.qtd_mat}</td>
+                    <td>${item.quantidade}</td>
                     <td>${mat.nome_material}</td>
                     <td>${mat.tipo_contagem_mat}</td>
                     <td>${mat.unidade_medida}</td>

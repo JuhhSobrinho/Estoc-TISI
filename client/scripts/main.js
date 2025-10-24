@@ -170,6 +170,7 @@ window.limparfiltroTabelaUser = function () {
 
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('show');
   sidebar.classList.toggle('collapsed');
 
   // Aguarda a transição e força redimensionamento dos gráficos

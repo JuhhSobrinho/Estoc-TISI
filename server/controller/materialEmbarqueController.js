@@ -30,7 +30,8 @@ exports.getMaterialEmbarqueCompleto = async (req, res) => {
         cliente_plat
       ),
       plataforma_destino:plataforma_destino_id_emb (
-        nome_plat
+        nome_plat,
+        cliente_plat
       )
     ),
     cautela_material (

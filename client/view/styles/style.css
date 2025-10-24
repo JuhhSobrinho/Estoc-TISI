@@ -169,6 +169,8 @@
         animation: growLine 1s ease-in-out forwards;
     }
 
+
+
     @keyframes growLine {
         from {
             width: 0;
@@ -232,30 +234,18 @@
     }
 
 
+
+
     /* Responsividade para telas menores */
-    @media (max-width: 768px) {
-
-        /* Sidebar ocupa largura total no mobile */
+    @media screen and (max-width: 780px) {
         #sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 220px !important;
-            /* um pouco mais largo para caber texto */
-            height: 100%;
-            z-index: 1050;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
+            width: 240px;
         }
 
-        #sidebar.show {
-            transform: translateX(0);
-        }
-
-        /* Conteúdo ocupa toda largura quando sidebar está escondida */
         #conteudo {
-            padding: 10px;
             margin-left: 0;
+            /* ocupa toda a tela */
+            padding: 1rem;
         }
 
         /* Cards em coluna única */
@@ -285,23 +275,5 @@
 
         p {
             font-size: 0.9rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-
-        /* Ainda mais compacto em celulares muito pequenos */
-        #sidebar {
-            width: 180px;
-        }
-
-        .table td,
-        .table th {
-            padding: 4px;
-            font-size: 11px;
-        }
-
-        .card-body {
-            padding: 10px;
         }
     }

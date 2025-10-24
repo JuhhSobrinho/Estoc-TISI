@@ -35,7 +35,7 @@ export function ativarEdicaoMaterial() {
       // Funcionário vinculado
       document.getElementById("funcionarioVinculo").value = getFuncionarioId(cells[14].innerText);
       document.getElementById("dataCautelaVinculo").value = formatarData(cells[10].innerText);
-      document.getElementById("equipamentoVinculo").value = getEquipamentoId(cells[2].innerText); // exemplo: vincular pelo tipo de contagem ou descrição
+      document.getElementById("listaEquipamentos").value = getEquipamentoId(cells[2].innerText); // exemplo: vincular pelo tipo de contagem ou descrição
     });
   });
 }
@@ -169,12 +169,8 @@ async function salvarPlataforma() {
 
 export async function salvarTudo() {
   const nomeFuncionario = document.getElementById("funcionarioVinculo").value.trim();
-  const idFuncionario = funcionariosMap[nomeFuncionario];
+  const idFuncionario = funcionariosMap[nomeFuncionario] || null;
 
-  if (!idFuncionario) {
-    alert("Funcionário não encontrado. Verifique o nome digitado.");
-    return;
-  }
 
   // --- Captura campos de Material ---
   const idMaterial = document.getElementById("idMaterial").value;

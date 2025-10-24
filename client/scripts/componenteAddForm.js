@@ -164,8 +164,9 @@ export async function inicializarFormularioDeRequisicao() {
         }
 
         // 1. Captura dos dados principais
+        const nomeReq = document.getElementById("nomeRequisicao").value.trim();
         const description = document.getElementById("observacoes").value;
-        const id_funcionario = 1; // ← você pode puxar isso dinamicamente
+        const id_funcionario = document.getElementById("solicitante").value;
         const origem = document.getElementById("origem").value;
         const destino = document.getElementById("destino").value;
 
@@ -207,6 +208,7 @@ export async function inicializarFormularioDeRequisicao() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
+                    nomeReq,
                     description,
                     id_funcionario,
                     id_embarque,

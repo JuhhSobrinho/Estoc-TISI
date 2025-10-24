@@ -407,9 +407,91 @@ function parseISODateLocal(isoDateStr) {
 
 
 
+function aplicarFiltroPorTipo(tipoFiltro) {
+  const dados = coletarDadosTabela();
+
+  // 🔎 filtra só os materiais que batem com o tipo ou descrição
+  let filtrados = dados.filter(d =>
+    d.tipo.toLowerCase().includes(tipoFiltro) ||
+    d.descricao.toLowerCase().includes(tipoFiltro)
+  );
+
+  // --- Atualiza tabela ---
+  const linhas = document.querySelectorAll('table tbody tr');
+  linhas.forEach(linha => {
+    const cols = linha.querySelectorAll('td');
+    const descricaoLinha = cols[1]?.textContent.trim().toLowerCase();
+    const tipoLinha = cols[7]?.textContent.trim().toLowerCase();
+
+    const mostrar = filtrados.some(d =>
+      d.descricao.toLowerCase() === descricaoLinha ||
+      d.tipo.toLowerCase() === tipoLinha
+    );
+
+    linha.style.display = mostrar ? '' : 'none';
+  });
+
+  // --- Agrupa por plataforma destino para o gráfico verde ---
+  const agrupado = {};
+  filtrados.forEach(d => {
+    agrupado[d.platDestino] = (agrupado[d.platDestino] || 0) + d.quantidade;
+  });
+
+  const labels = Object.keys(agrupado);
+  const valores = Object.values(agrupado);
+
+  if (graficoPlatUtilizados) {
+    graficoPlatUtilizados.data.labels = labels;
+    graficoPlatUtilizados.data.datasets[0].data = valores;
+    graficoPlatUtilizados.update();
+  }
+
+  // --- Atualiza gráfico de vencimento ---
+  if (graficoVencer) {
+    const dadosComValidade = filtrados.filter(d => d.validade && d.status !== "Utilizado");
+    const pontos = dadosComValidade.map(d => ({
+      x: d.descricao,
+      y: new Date(d.validade)
+    }));
+
+    graficoVencer.data.datasets[0].data = pontos;
+    graficoVencer.update();
+  }
+
+  // --- Atualiza gráfico de N. Utilizados ---
+  if (graficoPlatNUtilizados) {
+    const naoUtilizados = filtrados.filter(d => d.status !== "Utilizado");
+    const agrupadoNU = {};
+    naoUtilizados.forEach(d => {
+      agrupadoNU[d.platDestino] = (agrupadoNU[d.platDestino] || 0) + d.quantidade;
+    });
+
+    graficoPlatNUtilizados.data.labels = Object.keys(agrupadoNU);
+    graficoPlatNUtilizados.data.datasets[0].data = Object.values(agrupadoNU);
+    graficoPlatNUtilizados.update();
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 export function listarGraficos(dados) {
+
+
+  document.getElementById("btn-busca-material").addEventListener("click", () => {
+    const termo = document.getElementById("busca").value.trim().toLowerCase();
+    aplicarFiltroPorTipo(termo);
+  });
+
+
 
   // --- Materiais a vencer ---
   // --- Materiais a vencer ---

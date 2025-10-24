@@ -18,7 +18,7 @@ export function iniciarConferenciaMaterial(id) {
       document.getElementById("relDataRequisicao").textContent = dados.dt_form;
       document.getElementById("relSolicitante").textContent = dados.id_funcionario;
       document.getElementById("relStatus").textContent = dados.aprovado ? "Aprovado" : "Pendente";
-      document.getElementById("relDestino").textContent = (dados.embarque.plataforma_origem.nome_plat)+'/'+(dados.embarque.plataforma_destino.nome_plat);
+      document.getElementById("relDestino").textContent = (dados.embarque.plataforma_origem.nome_plat) + '/' + (dados.embarque.plataforma_destino.nome_plat);
 
       destinoEmbarque = dados.id_embarque;
       document.getElementById("relObservacoes").textContent = dados.description;
@@ -75,26 +75,21 @@ export function iniciarConferenciaMaterial(id) {
       if (kardexTabela === kardexDigitado) {
         encontrado = true;
 
+        // sempre limpa antes
+        linha.classList.remove("table-success", "table-warning", "table-danger", "table-light");
+
         if (!linha.classList.contains("table-success") && !linha.classList.contains("table-warning")) {
           if (qtdTabela === qtdDigitada) {
             conferidoCorretamente = true;
             linha.classList.add("table-success");
 
-            // Atualiza no banco
             const item = dadosFormulario.item_formulario[index];
             fetch(`/formulario/item_formulario/${item.id_form_item}`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ satus: "Aprovado" })
             })
-
-              .then(async res => {
-                if (!res.ok) {
-                  const text = await res.text();
-                  throw new Error(`HTTP ${res.status}: ${text}`);
-                }
-                return res.json();
-              })
+              .then(res => res.json())
               .then(resp => console.log("✅ Status atualizado:", resp))
               .catch(err => console.error("❌ Erro ao atualizar status:", err));
 
@@ -103,6 +98,7 @@ export function iniciarConferenciaMaterial(id) {
           }
         }
       }
+
     });
 
     if (!encontrado) {

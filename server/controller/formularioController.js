@@ -2,6 +2,7 @@ const supabase = require('../config/config');
 
 exports.criarFormulario = async (req, res) => {
   const {
+    nomeReq,
     description,
     id_funcionario,
     id_embarque,
@@ -24,6 +25,7 @@ exports.criarFormulario = async (req, res) => {
   const { data: formData, error: formError } = await supabase
     .from('formulario')
     .insert([{
+      nome_form: nomeReq,
       qtd_mat: qtdTotal,
       description,
       id_funcionario,

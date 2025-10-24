@@ -324,15 +324,23 @@ export function geral() {
 
 
         const canvas = document.getElementById('meuGrafico');
-        const grafico = Chart.getChart(canvas);  // Pega o gráfico existente
+        const grafico = Chart.getChart(canvas);
+
         if (grafico) {
-            grafico.data.labels = filtrados.map(d => d.tecnico);  // Usa o nome do técnico como label
-            grafico.data.datasets[0].data = filtrados.map(d => 1);  // Ou use um contador, como o número de itens
-            grafico.update();  // Atualiza o gráfico
+            // 🔎 Agrupa novamente por técnico
+            const contagemPorTecnico = {};
+            filtrados.forEach(d => {
+                contagemPorTecnico[d.tecnico] = (contagemPorTecnico[d.tecnico] || 0) + 1;
+            });
+
+            grafico.data.labels = Object.keys(contagemPorTecnico);
+            grafico.data.datasets[0].data = Object.values(contagemPorTecnico);
+            grafico.update();
         } else {
             console.warn('Gráfico não encontrado; crie-o primeiro.');
-            montarGraficoComDados();  // Cria se não existir
+            montarGraficoComDados();
         }
+
     }
 
 

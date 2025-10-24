@@ -119,16 +119,15 @@ function aplicarFiltrosEGrafico() {
         const unidadeMatch = unidade && unidade !== 'Todas' ? d.platDestino === unidade : true;
 
         // Função auxiliar para comparar datas
-        function isSameDay(date1, date2) {
+        function isSameMonth(date1, date2) {
             return (
                 date1.getFullYear() === date2.getFullYear() &&
-                date1.getMonth() === date2.getMonth() &&
-                date1.getDate() === date2.getDate()
+                date1.getMonth() === date2.getMonth()
             );
         }
 
         const embarqueMatch = buscaDtEmb instanceof Date && !isNaN(buscaDtEmb)
-            ? d.dtEmbarque && isSameDay(parseISODateToDateObjectEmb(d.dtEmbarque), buscaDtEmb)
+            ? d.dtEmbarque && isSameMonth(parseISODateToDateObjectEmb(d.dtEmbarque), buscaDtEmb)
             : true;
 
         return nomeMatch && kardexMatch && statusMatch && tipoMatch && vencidoMatch &&
@@ -258,7 +257,7 @@ export function montarGrafico(dados) {
                     <td>${datEmbarque}</td>
                     <td>${emb.plataforma_origem.nome_plat}</td>
                     <td>${emb.plataforma_destino.nome_plat}</td>
-                    <td>${emb.plataforma_origem.cliente_plat}</td>
+                    <td>${emb.plataforma_destino.cliente_plat}</td>
                 `;
                 tbody.appendChild(row);
             });

@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = 3000;
+const PORT = 8104;
 
 const plataformaRoutes = require('./routes/plataforma.Routes.js');
 const materialEmbarqueRoutes = require('./routes/materialEmbarque.Routes.js');

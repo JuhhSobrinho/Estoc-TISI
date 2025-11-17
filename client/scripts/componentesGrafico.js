@@ -49,7 +49,7 @@ export function montarTabGrafico() {
   <td>${datEmbarque}</td>
   <td>${emb.plataforma_origem.nome_plat}</td>
   <td>${emb.plataforma_destino.nome_plat}</td>
-  <td>${emb.plataforma_origem.cliente_plat}</td>
+  <td>${emb.plataforma_destino.cliente_plat}</td>
 `;
         tbody.appendChild(row);
       });

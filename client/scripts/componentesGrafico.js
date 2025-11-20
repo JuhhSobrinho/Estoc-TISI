@@ -573,7 +573,7 @@ export function listarGraficos(dados) {
           y: {
             type: 'time',
             time: { unit: 'day', tooltipFormat: 'dd/MM/yyyy', displayFormats: { day: 'dd/MM/yyyy' } },
-            min: minData,
+            min: '2025-10-10',
             max: maxData,
             title: { display: true, text: 'Data de Validade' }
           }

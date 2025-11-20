@@ -34,7 +34,7 @@ export function montarTabGrafico() {
         const row = document.createElement('tr');
         row.innerHTML = `
   <th scope="row">${index + 1}</th>
-  <td>${mat.qtd_mat}</td>
+  <td>${item.quantidade}</td>
   <td>${mat.nome_material}</td>
   <td>${mat.tipo_contagem_mat}</td>
   <td>${mat.unidade_medida}</td>
@@ -726,7 +726,6 @@ export function listarGraficos(dados) {
           y: {
             type: 'logarithmic',
             beginAtZero: true,
-            min: 10, // evita que valores muito pequenos fiquem achatados
             title: {
               display: true,
               text: 'Quantidade'
@@ -807,7 +806,6 @@ export function listarGraficos(dados) {
           y: {
             type: 'logarithmic',
             beginAtZero: true,
-            min: 10, // evita que valores muito pequenos fiquem achatados
             title: {
               display: true,
               text: 'Quantidade'

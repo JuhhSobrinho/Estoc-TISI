@@ -15,6 +15,9 @@ async function carregarMenuFormularios() {
 
   const menu = document.querySelector('#sidebar ul.nav');
 
+  // 🔑 cria um container para os itens
+  const container = document.createElement('div');
+  container.className = 'menu-formularios';
 
   formularios.forEach(form => {
     const li = document.createElement('li');
@@ -25,14 +28,15 @@ async function carregarMenuFormularios() {
     link.dataset.pagina = `./formVer.html?id=${form.id_form}`;
     link.href = "#";
     link.innerHTML = `
-    <i class="bi bi-input-cursor"></i>
-    <span class="text-label">${form.nome_form}</span>
-  `;
+      <i class="bi bi-input-cursor"></i>
+      <span class="text-label">${form.nome_form}</span>
+    `;
 
     li.appendChild(link);
-    menu.appendChild(li);
 
-    // 🔑 adiciona o listener aqui também
+    // 👉 adiciona dentro do container, mais recente em cima
+    container.prepend(li);
+
     link.addEventListener('click', e => {
       e.preventDefault();
       const pagina = link.getAttribute('data-pagina');
@@ -40,7 +44,10 @@ async function carregarMenuFormularios() {
     });
   });
 
+  // 🔑 no final, adiciona o container ao menu
+  menu.appendChild(container);
 }
+
 
 carregarMenuFormularios();
 

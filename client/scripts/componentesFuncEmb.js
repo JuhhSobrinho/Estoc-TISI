@@ -152,6 +152,10 @@ export function geral() {
         const dados = [];
 
         linhas.forEach(linha => {
+            // Pega o <th> da linha
+            const th = linha.querySelector('th[scope="row"]');
+            const id = th?.getAttribute('data-id');  // aqui está o seu id
+
             const colunas = linha.querySelectorAll('td');
             console.log('Colunas na linha:', colunas.length);
             console.log('Conteúdo das colunas:', Array.from(colunas).map(td => td.textContent.trim()));
@@ -173,10 +177,11 @@ export function geral() {
                 }
             }
 
-            console.log('Dados extraídos:', { tecnico, dtEmbarque });
+            console.log('Dados extraídos:', { id, tecnico, dtEmbarque });
 
             if (tecnico && dtEmbarque) {
                 dados.push({
+                    id,           // agora você guarda o data-id
                     tecnico,
                     status,
                     contato,
@@ -187,6 +192,7 @@ export function geral() {
                 });
             }
         });
+
         dadosGlobais = dados;  // Atualiza a variável global
         console.log(dados, 'dados finais');
         return dados;  // Continua retornando, se necessário
@@ -283,8 +289,12 @@ export function geral() {
         filtrados.forEach((d, index) => {
             const linha = document.createElement('tr');
 
+            // Aqui você adiciona o atributo data-id
+             // assumindo que cada objeto d tem a propriedade id
+
             // Coluna: Número da linha
             const thLine = document.createElement('th');
+            thLine.setAttribute('data-id', d.id);
             thLine.scope = 'row';
             thLine.textContent = index + 1;
             linha.appendChild(thLine);
@@ -317,8 +327,9 @@ export function geral() {
             description.textContent = d.descricao || '-';
             linha.appendChild(description);
 
-            tbody.appendChild(linha);
+            tbody.append(linha);
         });
+
         selecionarLinhaTabela();
 
 

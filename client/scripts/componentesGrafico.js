@@ -1,5 +1,5 @@
 export let graficoVendas, graficoVencer, graficoBaixoEstoque, graficoPlatUtilizados, graficoPlatNUtilizados, graficoPrinMatBaixoIndicie;
-let plataformaSelecionada = null;
+let plataformaSelecionada = 'BASE';
 
 
 export function montarTabGrafico() {
@@ -335,10 +335,9 @@ function atualizarTodosGraficos() {
   if (graficoVencer) {
     const dadosComValidade = dadosFiltrados.filter(d => d.validade);
 
-    // Converte para Date e filtra inválidos
     const pontos = dadosComValidade
       .map(d => {
-        const dt = new Date(d.validade); // d.validade em "yyyy-MM-dd"
+        const dt = new Date(d.validade);
         return (dt instanceof Date && !isNaN(dt)) ? { x: d.descricao, y: dt } : null;
       })
       .filter(Boolean);
@@ -357,7 +356,6 @@ function atualizarTodosGraficos() {
       graficoVencer.options.scales.y.max = maxData;
       graficoVencer.update();
     } else {
-      // Se não há datas válidas, evita cair para 1970
       graficoVencer.data.datasets[0].data = [];
       graficoVencer.options.scales.y.min = undefined;
       graficoVencer.options.scales.y.max = undefined;
@@ -365,12 +363,33 @@ function atualizarTodosGraficos() {
     }
   }
 
-  // Atualiza gráfico de baixo estoque (mantém igual)
+  // Atualiza gráfico de baixo estoque (com filtro de materiais principais)
   if (graficoBaixoEstoque) {
+    const principaisMateriais = [
+      "fibra de carbono",
+      "fibra de vidro",
+      "resina st",
+      "resina ht",
+      "resimac 114",
+      "resimac 302",
+      "jotun"
+    ];
+
+    // Inicializa todos com 0
     const agrupado = {};
+    principaisMateriais.forEach(mat => {
+      agrupado[mat] = 0;
+    });
+
+    // Soma apenas os que batem com os principais
     dadosFiltrados.forEach(d => {
-      if (d.platDestino === "BASE") {
-        agrupado[d.descricao] = (agrupado[d.descricao] || 0) + d.quantidade;
+      const desc = d.descricao.toLowerCase();
+      if (d.platDestino === plataformaSelecionada) {
+        principaisMateriais.forEach(mat => {
+          if (desc.includes(mat)) {
+            agrupado[mat] += d.quantidade;
+          }
+        });
       }
     });
 
@@ -381,7 +400,9 @@ function atualizarTodosGraficos() {
     graficoBaixoEstoque.data.datasets[0].data = valores;
     graficoBaixoEstoque.update();
   }
+
 }
+
 
 
 
@@ -586,23 +607,50 @@ export function listarGraficos(dados) {
   // --- Baixo estoque ---
   const baixoEstoque = document.getElementById('meuGraficoBaixoEstoque');
   if (baixoEstoque) {
-    // Lista completa de materiais que você quer mostrar
-    const todosMateriais = [...new Set(dados.map(d => d.descricao))];
+    // Lista de termos principais (relativos)
+    const principaisMateriais = [
+      "fibra de carbono",
+      "fibra de vidro",
+      "resina st",
+      "resina ht",
+      "resimac 114",
+      "resimac 302",
+      "jotun"
+    ];
 
-    // Inicializa todos com 0
+    // Inicializa agrupado
     const agrupado = {};
-    todosMateriais.forEach(mat => {
+    principaisMateriais.forEach(mat => {
       agrupado[mat] = 0;
     });
 
+    // Soma apenas os que contêm o termo
     dados.forEach(d => {
-      if (d.platDestino === "BASE") {
-        agrupado[d.descricao] += d.quantidade;
+      if (d.platDestino === plataformaSelecionada) {
+        const desc = d.descricao.toLowerCase();
+        principaisMateriais.forEach(mat => {
+          if (desc.includes(mat)) {
+            agrupado[mat] += d.quantidade;
+          }
+        });
       }
     });
 
     const labels = Object.keys(agrupado);
     const valores = Object.values(agrupado);
+    function corMaterial(nome, valor) {
+      const nomeLower = nome.toLowerCase();
+
+      if ((nomeLower.includes("fibra de carbono") && valor < 2) ||
+        (nomeLower.includes("resimac") && valor < 2) ||
+        (nomeLower.includes("jotun") && valor < 2) ||
+        (nomeLower.includes("resina") && valor < 15) ||
+        (nomeLower.includes("fibra de vidro") && valor < 1)) {
+        return "rgba(255, 0, 0, 0.7)"; // vermelho
+      }
+
+      return "rgba(54, 162, 235, 0.7)"; // azul padrão
+    }
 
     graficoBaixoEstoque = new Chart(baixoEstoque.getContext('2d'), {
       type: 'bar',
@@ -611,7 +659,7 @@ export function listarGraficos(dados) {
         datasets: [{
           label: 'Baixo Estoque (Unidade Base)',
           data: valores,
-          backgroundColor: labels.map((_, i) => i % 2 === 0 ? 'rgba(54, 162, 235, 0.7)' : 'rgba(54, 162, 235, 0.3)'),
+          backgroundColor: labels.map((nome, i) => corMaterial(nome, valores[i])),
           borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 1
         }]
@@ -620,9 +668,7 @@ export function listarGraficos(dados) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: true
-          },
+          legend: { display: true },
           tooltip: {
             callbacks: {
               label: function (context) {
@@ -633,39 +679,20 @@ export function listarGraficos(dados) {
             }
           }
         },
-        onClick: (evt, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            const label = graficoBaixoEstoque.data.labels[index];
-
-            // Sempre filtra por material dentro da plataforma BASE
-            aplicarFiltroTabelaCombinado(graficoBaixoEstoque, label, "BASE", "N. Utilizado");
-          }
-        },
         scales: {
           y: {
-            type: 'logarithmic',
             beginAtZero: true,
-            min: 0, // evita que valores muito pequenos fiquem achatados
-            max: 350, // ajusta o topo para não exagerar
-            title: {
-              display: true,
-              text: 'Quantidade'
-            },
-            ticks: {
-              callback: value => Number(value).toLocaleString()
-            }
+            title: { display: true, text: 'Quantidade' },
+            max: 200
           },
           x: {
-            title: {
-              display: true,
-              text: 'Plataforma'
-            }
+            title: { display: true, text: 'Material' }
           }
         }
       }
     });
   }
+
 
 
 

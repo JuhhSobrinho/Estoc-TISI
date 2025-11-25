@@ -4,55 +4,54 @@ exports.getMaterialEmbarqueCompleto = async (req, res) => {
   const { data, error } = await supabase
     .from('material_embarque')
     .select(`
-    id_mat_emb,
-    rt_emb,
-    frete_mat_emb,
-    quantidade,
-    data_mat_emb,
-    status_mat_emb,
-    material (
-      id_mat,
-      qtd_mat,
-      nome_material,
-      tipo_contagem_mat,
-      valor_unidade_mat,
-      kardex_mat,
-      data_validade_mat,
-      tipo (
-        description_tip
+      id_mat_emb,
+      rt_emb,
+      frete_mat_emb,
+      quantidade,
+      data_mat_emb,
+      status_mat_emb,
+      material (
+        id_mat,
+        qtd_mat,
+        nome_material,
+        tipo_contagem_mat,
+        valor_unidade_mat,
+        kardex_mat,
+        data_validade_mat,
+        tipo (
+          description_tip
+        ),
+        status_mat,
+        unidade_medida
       ),
-      status_mat,
-      unidade_medida
-    ),
-    embarque (
-      plataforma_origem:plataforma_origem_id_emb (
-        nome_plat,
-        cliente_plat
+      embarque (
+        plataforma_origem:plataforma_origem_id_emb (
+          nome_plat,
+          cliente_plat
+        ),
+        plataforma_destino:plataforma_destino_id_emb (
+          nome_plat,
+          cliente_plat
+        )
       ),
-      plataforma_destino:plataforma_destino_id_emb (
-        nome_plat,
-        cliente_plat
+      cautela_material (
+        id_cautela,
+        funcionario:id_funcionario (
+          nome_func
+        )
       )
-    ),
-    cautela_material (
-      id_cautela,
-      funcionario:id_funcionario (
-        nome_func
-      )
-    )
-  `);
-
+    `)
+    .gt('quantidade', 0);   // ← filtro para só trazer quantidade > 0
 
   if (error) {
     console.error('❌ Erro ao buscar dados do Supabase:', error);
     return res.status(500).json({ error: 'Erro ao buscar dados' });
   }
 
-  console.log('✅ Dados recebidos do Supabase:', JSON.stringify(data, null, 2)); // ← Aqui está o log!
-
+  console.log('✅ Dados recebidos do Supabase:', JSON.stringify(data, null, 2));
   res.json(data);
-
 };
+
 
 exports.setMaterialEmbarque = async (req, res) => {
   const {

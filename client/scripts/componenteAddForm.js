@@ -112,6 +112,11 @@ export async function inicializarFormularioDeRequisicao() {
     function atualizarListaDeMateriais(materiais) {
         materiaisMapeados = {}; // limpa antes de popular
 
+        // 🔎 Ordena alfabeticamente pelo nome do material
+        materiais.sort((a, b) =>
+            a.material.nome_material.localeCompare(b.material.nome_material)
+        );
+
         const selects = document.querySelectorAll('select[name="material[]"]');
 
         selects.forEach(select => {
@@ -127,12 +132,13 @@ export async function inicializarFormularioDeRequisicao() {
                 };
 
                 const option = document.createElement("option");
-                option.value = chave; // 👈 value agora é o id_mat_emb
-                option.textContent = `${nome} (Qtd: ${mat.quantidade})`; // opcional: mostrar qtd no texto
+                option.value = chave;
+                option.textContent = `${nome} (Qtd: ${mat.quantidade})`;
                 select.appendChild(option);
             });
         });
     }
+
 
 
     document.addEventListener("change", function (e) {

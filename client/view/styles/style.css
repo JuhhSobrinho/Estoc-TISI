@@ -10,11 +10,21 @@
         font-weight: bold;
     }
 
+    .menu-formularios{
+        overflow-x:hidden;
+        overflow-y: auto;
+        height: 50vh;
+    }
 
 
     #sidebar {
         width: 180px;
         transition: width 0.3s;
+        height: 100vh;
+    }
+
+    .nav{
+        width: 100%;
     }
 
     #sidebar.collapsed {

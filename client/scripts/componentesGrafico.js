@@ -657,7 +657,7 @@ export function listarGraficos(dados) {
       data: {
         labels,
         datasets: [{
-          label: 'Baixo Estoque (Unidade Base)',
+          label: 'Baixo Estoque',
           data: valores,
           backgroundColor: labels.map((nome, i) => corMaterial(nome, valores[i])),
           borderColor: 'rgba(54, 162, 235, 1)',

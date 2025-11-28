@@ -641,6 +641,9 @@ export function listarGraficos(dados) {
     function corMaterial(nome, valor) {
       const nomeLower = nome.toLowerCase();
 
+      console.log(nome, valor);
+
+
       if ((nomeLower.includes("fibra de carbono") && valor < 2) ||
         (nomeLower.includes("resimac") && valor < 2) ||
         (nomeLower.includes("jotun") && valor < 2) ||
@@ -659,10 +662,16 @@ export function listarGraficos(dados) {
         datasets: [{
           label: 'Baixo Estoque',
           data: valores,
-          backgroundColor: labels.map((nome, i) => corMaterial(nome, valores[i])),
+          backgroundColor: function (ctx) {
+            const index = ctx.dataIndex;
+            const nome = ctx.chart.data.labels[index];
+            const valor = ctx.dataset.data[index];
+            return corMaterial(nome, valor);
+          },
           borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 1
         }]
+
       },
       options: {
         responsive: true,
@@ -765,8 +774,16 @@ export function listarGraficos(dados) {
             title: {
               display: true,
               text: 'Plataforma'
+            },
+            ticks: {
+              callback: function (value, index) {
+                const label = this.getLabelForValue(value);
+                // Limita a 15 caracteres e adiciona "..." se for maior
+                return label.length > 15 ? label.substring(0, 15) + '...' : label;
+              }
             }
           }
+
         }
       }
     });
@@ -845,8 +862,16 @@ export function listarGraficos(dados) {
             title: {
               display: true,
               text: 'Plataforma'
+            },
+            ticks: {
+              callback: function (value, index) {
+                const label = this.getLabelForValue(value);
+                // Limita a 15 caracteres e adiciona "..." se for maior
+                return label.length > 15 ? label.substring(0, 15) + '...' : label;
+              }
             }
           }
+
         }
 
       }

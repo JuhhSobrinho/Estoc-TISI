@@ -316,6 +316,13 @@ function montarGraficoComDados() {
                     title: {
                         display: true,
                         text: 'Plataforma'
+                    },
+                    ticks: {
+                        callback: function (value, index) {
+                            const label = this.getLabelForValue(value);
+                            // Limita a 15 caracteres e adiciona "..." se for maior
+                            return label.length > 15 ? label.substring(0, 15) + '...' : label;
+                        }
                     }
                 }
             }

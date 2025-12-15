@@ -382,9 +382,9 @@ function atualizarTodosGraficos() {
     });
 
     // Soma apenas os que batem com os principais
-    dadosFiltrados.forEach(d => {
-      const desc = d.descricao.toLowerCase();
-      if (d.platDestino === plataformaSelecionada) {
+    dados.forEach(d => {
+      if (d.platDestino === plataformaSelecionada && d.status_mat !== "	Utilizado") {
+        const desc = d.descricao.toLowerCase();
         principaisMateriais.forEach(mat => {
           if (desc.includes(mat)) {
             agrupado[mat] += d.quantidade;
@@ -392,6 +392,7 @@ function atualizarTodosGraficos() {
         });
       }
     });
+
 
     const labels = Object.keys(agrupado);
     const valores = Object.values(agrupado);
@@ -626,7 +627,7 @@ export function listarGraficos(dados) {
 
     // Soma apenas os que contêm o termo
     dados.forEach(d => {
-      if (d.platDestino === plataformaSelecionada) {
+      if (d.platDestino === plataformaSelecionada && d.status_mat !== "Utilizado") {
         const desc = d.descricao.toLowerCase();
         principaisMateriais.forEach(mat => {
           if (desc.includes(mat)) {
@@ -635,6 +636,7 @@ export function listarGraficos(dados) {
         });
       }
     });
+
 
     const labels = Object.keys(agrupado);
     const valores = Object.values(agrupado);
@@ -836,7 +838,7 @@ export function listarGraficos(dados) {
 
             if (estadoGrafico === 'plataforma') {
               plataformaSelecionada = label;
-              aplicarFiltroTabela(graficoPlatNUtilizados, label, "N. Utilizado", "plataforma");
+              aplicarFiltroTabela(graficoPlatNUtilizados, label, "N Utilizado", "plataforma");
               estadoGrafico = 'descricao';
             } else {
               aplicarFiltroTabelaCombinado(graficoPlatNUtilizados, label, plataformaSelecionada, "N. Utilizado");

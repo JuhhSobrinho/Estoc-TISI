@@ -75,7 +75,9 @@ exports.setMaterialEmbarque = async (req, res) => {
   } = req.body;
 
   try {
-    // Exemplo: criar material embarcado
+    // Se vier vazio ou undefined, força null
+    const validadeFinal = validade && validade.trim() !== "" ? validade : null;
+
     const { data, error } = await supabase
       .from('material_embarque')
       .insert([
@@ -84,9 +86,8 @@ exports.setMaterialEmbarque = async (req, res) => {
           quantidade,
           frete_mat_emb: valorUnitario,
           rt_emb: kardex,
-          data_validade_mat: validade,
+          data_validade_mat: validadeFinal, // agora nunca será ""
           status_mat: status,
-          // outros campos conforme sua tabela
         }
       ]);
 
@@ -98,6 +99,8 @@ exports.setMaterialEmbarque = async (req, res) => {
     res.status(500).json({ error: 'Erro ao cadastrar material embarcado' });
   }
 };
+
+
 
 
 exports.getValidadePorMaterialEKardex = async (req, res) => {

@@ -30,6 +30,7 @@ export function ativarEdicaoMaterial() {
       document.getElementById("status").value = cells[8].innerText;
       document.getElementById("idMaterial").value = row.querySelector('th').dataset.id;
       document.getElementById("idCautelaMaterial").value = row.querySelector('td').dataset.id;
+      console.log("IDs setados:", row.querySelector('th').dataset.id, row.querySelector('td').dataset.id);
 
 
       // Funcionário vinculado
@@ -56,16 +57,23 @@ function getEquipamentoId(nome) {
 }
 
 // Formata data para padrão ISO (input[type="date"])
-function formatarData(data) {
-  console.log(data, "dt teste");
+function formatarData(valor) {
+  if (!valor || valor === "—") {
+    return ""; // retorna vazio se não houver data
+  }
 
-  const partes = data.split("/");
+  const partes = valor.split("/");
+  if (partes.length !== 3) {
+    return ""; // formato inesperado
+  }
+
   const dia = partes[0].padStart(2, "0");
   const mes = partes[1].padStart(2, "0");
   const ano = partes[2];
 
-  return `${ano}-${mes}-${dia}`;
+  return `${ano}-${mes}-${dia}`; // formato YYYY-MM-DD
 }
+
 
 export function montarTab() {
   fetch('/funcionario')
@@ -112,7 +120,7 @@ export function montarTab() {
 
         row.innerHTML = `
   <th scope="row"  data-id="${mat.id_mat}">${index + 1}</th>
-  <td data-id="${item.id_mat_emb}">${mat.qtd_mat}</td>
+  <td data-id="${item.id_mat_emb}">${item.quantidade}</td>
   <td>${mat.nome_material}</td>
   <td>${mat.tipo_contagem_mat}</td>
   <td>${mat.unidade_medida}</td>
@@ -125,7 +133,7 @@ export function montarTab() {
   <td>${datEmbarque}</td>
   <td>${emb.plataforma_origem.nome_plat}</td>
   <td>${emb.plataforma_destino.nome_plat}</td>
-  <td>${emb.plataforma_origem.cliente_plat}</td>
+  <td>${emb.plataforma_destino.cliente_plat}</td>
   <td>${funcionarioNome}</td>
 `;
 
@@ -173,9 +181,17 @@ export async function salvarTudo() {
 
 
   // --- Captura campos de Material ---
+  // Seleciona a linha (por exemplo, a que foi clicada)
   const idMaterial = document.getElementById("idMaterial").value;
+  const idMatEmbarque = document.getElementById("idCautelaMaterial").value;
+
+  console.log("idEmbarque:", idMatEmbarque);
+  console.log("idMaterial:", idMaterial);
+
+
   const tipoMaterial = parseInt(document.getElementById("tipoMaterial").value);
 
+  const validadeValue = document.getElementById("validade").value.trim();
   const materialPayload = {
     nome_material: document.getElementById("descricao").value.trim(),
     qtd_mat: document.getElementById("quantidade").value.trim(),
@@ -183,10 +199,11 @@ export async function salvarTudo() {
     unidade_medida: document.getElementById("unidadeMedida").value.trim(),
     valor_unidade_mat: document.getElementById("valorUnitario").value.trim(),
     kardex_mat: document.getElementById("kardex").value.trim(),
-    data_validade_mat: document.getElementById("validade").value.trim(),
+    data_validade_mat: validadeValue === "" ? null : validadeValue,
     tipo_mat: tipoMaterial,
     status_mat: document.getElementById("status").value.trim()
   };
+
 
   // --- Captura campos de Plataforma ---
   const plataformaPayload = {
@@ -196,7 +213,6 @@ export async function salvarTudo() {
   };
 
   // --- Captura campos de Cautela de Material ---
-  const idMatEmbarque = document.getElementById("idCautelaMaterial").value;
 
   const cautelaPayload = {
     id_funcionario: idFuncionario,
@@ -217,7 +233,6 @@ export async function salvarTudo() {
     materialPayload.unidade_medida &&
     materialPayload.valor_unidade_mat &&
     materialPayload.kardex_mat &&
-    materialPayload.data_validade_mat &&
     !isNaN(materialPayload.tipo_mat) &&
     materialPayload.status_mat;
 
@@ -240,12 +255,17 @@ export async function salvarTudo() {
 
   try {
     // --- Salva Material ---
+    // --- Salva Material ---
     if (materialPreenchido) {
-      const urlMat = idMaterial
+      const isUpdate = idMaterial && idMaterial.trim() !== "";
+      const urlMat = isUpdate
         ? `/material-com-embarque/${idMaterial}`
         : `/material-com-embarque`;
+      console.log(urlMat, "url material");
+      console.log("log id mat", idMaterial, idMatEmbarque);
 
-      const methodMat = idMaterial ? "PUT" : "POST";
+
+      const methodMat = isUpdate ? "PUT" : "POST";
 
       const resMat = await fetch(urlMat, {
         method: methodMat,
@@ -254,10 +274,13 @@ export async function salvarTudo() {
       });
 
       if (!resMat.ok) throw new Error("Erro ao salvar material");
-      console.log("✅ Material salvo com sucesso!");
+      console.log(isUpdate ? "✅ Material atualizado com sucesso!" : "✅ Material criado com sucesso!");
     }
 
+
     // --- Salva Plataforma ---
+    // --- Salva Plataforma ---
+
     if (plataformaPreenchida) {
       const resPlat = await fetch("/plataformas", {
         method: "POST",
@@ -269,6 +292,7 @@ export async function salvarTudo() {
       console.log("✅ Plataforma salva com sucesso!");
     }
 
+    // --- Salva Cautela ---
     // --- Salva Cautela ---
     if (cautelaPreenchida) {
       const resCautela = await fetch("/cautela-material", {
@@ -283,7 +307,6 @@ export async function salvarTudo() {
 
     alert("✅ Dados salvos com sucesso!");
     montarTab();
-    document.getElementById("idMaterial").value = "";
 
   } catch (err) {
     console.error("❌ Erro ao salvar:", err);

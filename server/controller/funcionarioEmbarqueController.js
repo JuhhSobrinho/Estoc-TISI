@@ -45,7 +45,7 @@ exports.criarFuncionarioEmbarque = async (req, res) => {
     description
   } = req.body;
 
-  console.log("📥 Recebido:", req.body);
+  //console.log("📥 Recebido:", req.body);
 
   if (!id_funcionario || !plataforma_origem || !plataforma_destino || !dt_embarque) {
     return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
@@ -61,7 +61,7 @@ exports.criarFuncionarioEmbarque = async (req, res) => {
   if (origemError || !origemData) {
     return res.status(400).json({ error: 'Plataforma de origem inválida' });
   }
-  console.log("🔍 Plataforma origem:", origemData);
+  //console.log("🔍 Plataforma origem:", origemData);
 
   // Buscar ID da plataforma destino
   const { data: destinoData, error: destinoError } = await supabase
@@ -73,7 +73,7 @@ exports.criarFuncionarioEmbarque = async (req, res) => {
   if (destinoError || !destinoData) {
     return res.status(400).json({ error: 'Plataforma de destino inválida' });
   }
-  console.log("🔍 Plataforma destino:", destinoData);
+  //console.log("🔍 Plataforma destino:", destinoData);
 
   const origemId = origemData.id_plat;
   const destinoId = destinoData.id_plat;
@@ -90,7 +90,7 @@ exports.criarFuncionarioEmbarque = async (req, res) => {
 
   if (embarqueExistente && embarqueExistente.length > 0) {
     embarqueId = embarqueExistente[0].id_emb;
-    console.log("🔁 Reutilizando embarque existente:", embarqueId);
+    //console.log("🔁 Reutilizando embarque existente:", embarqueId);
   } else {
     // Criar novo embarque
     const { data: novoEmbarque, error: erroNovoEmb } = await supabase
@@ -107,7 +107,7 @@ exports.criarFuncionarioEmbarque = async (req, res) => {
     }
 
     embarqueId = novoEmbarque.id_emb;
-    console.log("📦 Embarque criado:", embarqueId);
+    //console.log("📦 Embarque criado:", embarqueId);
   }
 
   // Criar vínculo com funcionário

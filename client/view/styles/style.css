@@ -5,13 +5,35 @@
     }
 
 
+    /* largura da barra */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    /* fundo da barra */
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    /* parte que se move (thumb) */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 6px;
+    }
+
+    /* hover no thumb */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+
     td.vencido {
         color: #dc3545;
         font-weight: bold;
     }
 
-    .menu-formularios{
-        overflow-x:hidden;
+    .menu-formularios {
+        overflow-x: hidden;
         overflow-y: auto;
         height: 50vh;
     }
@@ -23,7 +45,7 @@
         height: 100vh;
     }
 
-    .nav{
+    .nav {
         width: 100%;
     }
 
@@ -74,7 +96,7 @@
     }
 
     .tabela-wrapper {
-        max-height: 360px;
+        max-height: 550px;
         overflow-y: scroll;
         position: relative;
     }

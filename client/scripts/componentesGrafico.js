@@ -616,6 +616,7 @@ export function listarGraficos(dados) {
       "resina ht",
       "resimac 114",
       "resimac 302",
+      "resimac",
       "jotun"
     ];
 
@@ -694,7 +695,7 @@ export function listarGraficos(dados) {
           y: {
             beginAtZero: true,
             title: { display: true, text: 'Quantidade' },
-            max: 200
+            max: 150
           },
           x: {
             title: { display: true, text: 'Material' }
@@ -713,15 +714,31 @@ export function listarGraficos(dados) {
   if (platUtilizados) {
     const dados = coletarDadosTabela(); // já retorna {descricao, quantidade, platDestino, ...}
 
-    // Agrupar por platDestino e contar o número de itens
+    // Lista de materiais permitidos
+    const materiaisPermitidos = [
+      "fibra de carbono",
+      "fibra de vidro",
+      "resina st",
+      "resina ht",
+      "resimac 114",
+      "resimac 302",
+      "resimac",
+      "jotun"
+    ];
+
+    // Filtra apenas os materiais da lista
+    const filtrados = dados.filter(d =>
+      materiaisPermitidos.includes(d.descricao.toLowerCase())
+    );
+
+    // Agrupar por platDestino e somar quantidades
     const agrupado = {};
-    dados.forEach(d => {
+    filtrados.forEach(d => {
       if (!agrupado[d.platDestino]) {
         agrupado[d.platDestino] = 0;
       }
-      agrupado[d.platDestino] += d.quantidade; // Soma a quantidade real
+      agrupado[d.platDestino] += d.quantidade;
     });
-
 
     // Transformar em arrays para o gráfico
     const labels = Object.keys(agrupado); // Plataformas
@@ -733,7 +750,7 @@ export function listarGraficos(dados) {
       data: {
         labels,
         datasets: [{
-          label: 'Número de Itens por Plataforma',
+          label: 'Número de Itens (Materiais específicos)',
           data: valores,
           backgroundColor: 'rgba(40, 167, 69, 0.5)',
           borderColor: 'rgba(40, 167, 69, 1)',
@@ -753,8 +770,13 @@ export function listarGraficos(dados) {
               aplicarFiltroTabela(graficoPlatUtilizados, label, null, "plataforma");
               estadoGrafico = 'descricao';
             } else {
-              aplicarFiltroTabelaCombinado(graficoPlatUtilizados, label, plataformaSelecionada, "N. Utilizado");
-              estadoGrafico = 'plataforma'; // opcional: alterna de volta
+              aplicarFiltroTabelaCombinado(
+                graficoPlatUtilizados,
+                label,
+                plataformaSelecionada,
+                "N. Utilizado"
+              );
+              estadoGrafico = 'plataforma'; // alterna de volta
             }
 
             atualizarEscalaY(graficoPlatUtilizados, estadoGrafico);
@@ -780,16 +802,15 @@ export function listarGraficos(dados) {
             ticks: {
               callback: function (value, index) {
                 const label = this.getLabelForValue(value);
-                // Limita a 15 caracteres e adiciona "..." se for maior
                 return label.length > 15 ? label.substring(0, 15) + '...' : label;
               }
             }
           }
-
         }
       }
     });
   }
+
 
 
   // --- Plataformas não utilizadas ---

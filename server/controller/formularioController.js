@@ -9,8 +9,8 @@ exports.criarFormulario = async (req, res) => {
     materiais // array de objetos: [{ id_material, qtd_mat }]
   } = req.body;
 
-  console.log("embarques", id_embarque);
-  console.log("mat", materiais);
+  //console.log("embarques", id_embarque);
+  //console.log("mat", materiais);
 
 
 
@@ -121,7 +121,7 @@ exports.getFormularioNomes = async (req, res) => {
 exports.getFormularioId = async (req, res) => {
   const { id } = req.params;
 
-  console.log("dadosID", id);
+  //console.log("dadosID", id);
 
   const { data, error } = await supabase
     .from('formulario')
@@ -163,7 +163,7 @@ exports.getFormularioId = async (req, res) => {
 
 
   // 🔑 Aqui estava o erro: a variável é "data", não "dados"
-  console.log("dados", data);
+  //console.log("dados", data);
 
   if (error) {
     console.error("Erro Supabase:", error);
@@ -211,7 +211,7 @@ exports.confirmarRequisicao = async (req, res) => {
   const { id } = req.params; // id_form
   const { destino, data_embarque } = req.body;
 
-  console.log("➡️ Confirmação iniciada | destino:", destino, "| data:", data_embarque);
+  //console.log("➡️ Confirmação iniciada | destino:", destino, "| data:", data_embarque);
 
   // Busca os itens aprovados do formulário
   const { data: itens, error } = await supabase
@@ -235,21 +235,15 @@ exports.confirmarRequisicao = async (req, res) => {
     return res.status(400).json({ error });
   }
 
-  console.log(`📦 Itens aprovados encontrados: ${itens.length}`);
+  //console.log(`📦 Itens aprovados encontrados: ${itens.length}`);
 
   for (const item of itens) {
     const origem = item.material_embarque;
 
-    console.log(
-      `\n🔹 Processando item ${item.id_form_item} | Material ${origem.id_material}`
-    );
-    console.log(
-      `   Quantidade atual na origem: ${origem.quantidade} | Quantidade a transferir: ${item.qtd_mat}`
-    );
 
     // Calcula nova quantidade
     const novaQtd = origem.quantidade - item.qtd_mat;
-    console.log(`   ➡️ Nova quantidade na origem: ${novaQtd}`);
+    //console.log(`   ➡️ Nova quantidade na origem: ${novaQtd}`);
 
     // Atualiza origem → subtrai quantidade
     const { error: updateError } = await supabase
@@ -263,11 +257,6 @@ exports.confirmarRequisicao = async (req, res) => {
     if (updateError) {
       console.error("❌ Erro ao atualizar origem:", updateError);
       return res.status(400).json({ error: updateError });
-    } else {
-      console.log(
-        `   ✅ Origem atualizada | id_mat_emb: ${origem.id_mat_emb} | novaQtd: ${novaQtd} | status: ${novaQtd <= 0 ? "Enviado" : "Parcial"
-        }`
-      );
     }
 
     // Cria destino → mesma qtd transferida, novo embarque
@@ -286,10 +275,6 @@ exports.confirmarRequisicao = async (req, res) => {
     if (insertError) {
       console.error("❌ Erro ao inserir destino:", insertError);
       return res.status(400).json({ error: insertError });
-    } else {
-      console.log(
-        `   ✅ Destino criado | destino: ${destino} | qtd: ${item.qtd_mat}`
-      );
     }
   }
 
@@ -304,7 +289,7 @@ exports.confirmarRequisicao = async (req, res) => {
     return res.status(400).json({ error: formError });
   }
 
-  console.log(`✔️ Formulário ${id} marcado como concluído`);
+  //console.log(`✔️ Formulário ${id} marcado como concluído`);
 
   res.json({ message: 'Requisição confirmada com sucesso!' });
 };

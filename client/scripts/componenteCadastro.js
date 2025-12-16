@@ -1,5 +1,5 @@
 const funcionariosMap = {}; // nome_func → id_func
-
+let quantidadeAnterior = 0;
 
 
 function parseISODateLocal(isoDateStr) {
@@ -19,6 +19,7 @@ export function ativarEdicaoMaterial() {
       // Material
       document.getElementById("descricao").value = cells[1].innerText;
       document.querySelector(".nome-equipamento-cautelado").value = cells[1].innerText;
+      quantidadeAnterior = cells[0].innerText;
       document.getElementById("quantidade").value = cells[0].innerText;
       document.getElementById("tipoContagem").value = cells[2].innerText;
       document.getElementById("unidadeMedida").value = cells[3].innerText;
@@ -257,16 +258,19 @@ export async function salvarTudo() {
     // --- Salva Material ---
     // --- Salva Material ---
     if (materialPreenchido) {
+      console.log("ID do material:", idMaterial);
+
       const isUpdate = idMaterial && idMaterial.trim() !== "";
       const urlMat = isUpdate
         ? `/material-com-embarque/${idMaterial}`
         : `/material-com-embarque`;
-      console.log(urlMat, "url material");
-      console.log("log id mat", idMaterial, idMatEmbarque);
-
 
       const methodMat = isUpdate ? "PUT" : "POST";
 
+      // quantidadeAnterior já salva quando clicou na linha
+      console.log("Quantidade anterior:", quantidadeAnterior);
+
+      // Atualiza ou cria o material principal
       const resMat = await fetch(urlMat, {
         method: methodMat,
         headers: { "Content-Type": "application/json" },
@@ -274,8 +278,30 @@ export async function salvarTudo() {
       });
 
       if (!resMat.ok) throw new Error("Erro ao salvar material");
+
+      // Se houve redução, cria o saldo restante
+      const sobra = Number(quantidadeAnterior) - Number(materialPayload.qtd_mat);
+      if (isUpdate && sobra > 0) {
+        const payloadSobra = {
+          ...materialPayload,
+          qtd_mat: sobra,
+          status_mat: "N Utilizado"
+        };
+
+        const resSobra = await fetch(`/material-com-embarque`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadSobra)
+        });
+
+        if (!resSobra.ok) throw new Error("Erro ao salvar sobra de material");
+        console.log("✅ Sobra registrada com sucesso!");
+      }
+
       console.log(isUpdate ? "✅ Material atualizado com sucesso!" : "✅ Material criado com sucesso!");
     }
+
+
 
 
     // --- Salva Plataforma ---

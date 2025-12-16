@@ -53,7 +53,6 @@ exports.getItemFormularioEspecifico = async (req, res) => {
         return res.status(500).json({ error: 'Erro ao buscar dados' });
     }
 
-    console.log('✅ Dados recebidos do Supabase:', JSON.stringify(data, null, 2)); // ← Aqui está o log!
 
     res.json(data);
 

@@ -8,7 +8,7 @@ exports.getFuncionario = async (req, res) => {
     return res.status(500).send('Erro ao buscar funcionario');
   }
 
-  console.log('funcionario recebidas do Supabase:', data); // ← Aqui está o log!
+  //console.log('funcionario recebidas do Supabase:', data); // ← Aqui está o log!
 
   res.json(data);
 };

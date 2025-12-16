@@ -17,7 +17,7 @@ exports.buscarEmbarque = async (req, res) => {
 exports.criarEmbarque = async (req, res) => {
     const { origem, destino } = req.body;
 
-    console.log(origem, destino);
+    //console.log(origem, destino);
     
 
     if (!origem || !destino || isNaN(origem) || isNaN(destino)) {

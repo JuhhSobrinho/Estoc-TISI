@@ -84,20 +84,20 @@ exports.atualizarMaterialComEmbarque = async (req, res) => {
 
     try {
         // 1. Atualizar material
-        const { data: materialData, error: materialError } = 
-        await supabase.from('material')
-        .update({ 
-            nome_material, 
-            tipo_contagem_mat, 
-            unidade_medida, 
-            valor_unidade_mat, 
-            kardex_mat, 
-            data_validade_mat, 
-            tipo_mat: tipo_mat, 
-            status_mat, qtd_mat 
-        })
-        .eq('id_mat', idMaterial).select().single(); 
-        
+        const { data: materialData, error: materialError } =
+            await supabase.from('material')
+                .update({
+                    nome_material,
+                    tipo_contagem_mat,
+                    unidade_medida,
+                    valor_unidade_mat,
+                    kardex_mat,
+                    data_validade_mat,
+                    tipo_mat: tipo_mat,
+                    status_mat, qtd_mat
+                })
+                .eq('id_mat', idMaterial).select().single();
+
         if (materialError) throw materialError;
 
         // 2. Atualizar embarque vinculado
@@ -120,3 +120,26 @@ exports.atualizarMaterialComEmbarque = async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar material e embarque' });
     }
 };
+
+exports.getMaterialComEmbarquePorId = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const { data, error } = await supabase
+            .from('material_embarque')
+            .select('*')
+            .eq('id_mat_emb', id) // ou id_material, dependendo do caso
+            .maybeSingle();       // 👈 evita erro quando não encontra
+
+        if (error) throw error;
+        if (!data) return res.status(404).json({ error: "Material embarque não encontrado" });
+
+        res.json(data);
+    } catch (err) {
+        console.error('❌ Erro ao buscar material embarque:', err);
+        res.status(500).json({ error: 'Erro ao buscar material embarque' });
+    }
+};
+
+
+

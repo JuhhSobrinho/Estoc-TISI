@@ -1,3 +1,4 @@
+const os = require('os');
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -35,8 +36,26 @@ app.use('/embarque', embarqueRoutes);
 
 
 
+function getNetworkInfo() {
+  const interfaces = os.networkInterfaces();
+  const results = [];
 
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        results.push({ name, address: iface.address });
+      }
+    }
+  }
+  return results;
+}
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  const infos = getNetworkInfo();
+  console.log(`Servidor rodando em:`);
+  console.log(`- Localhost: http://localhost:${PORT}`);
+
+  infos.forEach(info => {
+    console.log(`- Rede "${info.name}": http://${info.address}:${PORT}`);
+  });
 });

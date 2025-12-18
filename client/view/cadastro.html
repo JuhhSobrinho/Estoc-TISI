@@ -83,11 +83,16 @@
                     Material</label>
                 <select class="form-select" id="tipoMaterial">
                     <option value>Selecione</option>
-                    <option value="1">Químico</option>
+                    <option value="1">Equipamento</option>
                     <option value="2">Resina</option>
                     <option value="3">Fibra</option>
-                    <option value="4">Ferramenta</option>
-                    <option value="5">Equipamento</option>
+                    <option value="5">Valvula</option>
+                    <option value="6">Selante</option>
+                    <option value="7">PFP</option>
+                    <option value="8">Fita</option>
+                    <option value="9">Tinta</option>
+                    <option value="10">Caixa</option>
+
                 </select>
 
             </div>
@@ -143,7 +148,8 @@
 
                                     <!-- Card Funcionário -->
                                     <div class="col-md-6">
-                                        <input type="hidden" id="idCautelaMaterial">
+                                        <input type="hidden"
+                                            id="idCautelaMaterial">
                                         <div class="card card-body">
                                             <div
                                                 class="card-header bg-warning text-dark">
@@ -245,6 +251,17 @@
                                             </div>
                                         </div>
 
+                                    </div>
+                                    <div
+                                        class="d-flex align-items-end gap-2 mb-3">
+                                        <button class="btn btn-primary"
+                                            id="btn-busca-material">Pesquisar
+                                            Material </button>
+                                        <div class="flex-grow-1">
+                                            <input type="text"
+                                                class="form-control" id="busca"
+                                                placeholder="Digite o nome...">
+                                        </div>
                                     </div>
                                     <button class="btn btn-primary m-3"
                                         id="btnCadastroGeral">Cadastrar/Atualizar</button>

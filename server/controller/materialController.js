@@ -69,7 +69,9 @@ exports.setMaterialComEmbarque = async (req, res) => {
 
 
 exports.atualizarMaterialComEmbarque = async (req, res) => {
-    const idMaterial = req.params.id; // ou req.body.idMaterial
+    const idMaterial = parseInt(req.params.id, 10);
+    const idMatEmbarque = parseInt(req.params.id_mat_emb, 10);
+
     const {
         nome_material,
         tipo_contagem_mat,
@@ -83,24 +85,25 @@ exports.atualizarMaterialComEmbarque = async (req, res) => {
     } = req.body;
 
     try {
-        // 1. Atualizar material
-        const { data: materialData, error: materialError } =
-            await supabase.from('material')
-                .update({
-                    nome_material,
-                    tipo_contagem_mat,
-                    unidade_medida,
-                    valor_unidade_mat,
-                    kardex_mat,
-                    data_validade_mat,
-                    tipo_mat: tipo_mat,
-                    status_mat, qtd_mat
-                })
-                .eq('id_mat', idMaterial).select().single();
+        // Atualizar material
+        const { error: materialError } = await supabase
+            .from('material')
+            .update({
+                nome_material,
+                tipo_contagem_mat,
+                unidade_medida,
+                valor_unidade_mat,
+                kardex_mat,
+                data_validade_mat,
+                tipo_mat,
+                status_mat,
+                qtd_mat
+            })
+            .eq('id_mat', idMaterial);
 
         if (materialError) throw materialError;
 
-        // 2. Atualizar embarque vinculado
+        // Atualizar embarque específico
         const { error: embarqueError } = await supabase
             .from('material_embarque')
             .update({
@@ -110,7 +113,7 @@ exports.atualizarMaterialComEmbarque = async (req, res) => {
                 status_mat_emb: status_mat,
                 data_mat_emb: new Date().toISOString().split('T')[0]
             })
-            .eq('id_material', idMaterial);
+            .eq('id_mat_emb', idMatEmbarque);
 
         if (embarqueError) throw embarqueError;
 

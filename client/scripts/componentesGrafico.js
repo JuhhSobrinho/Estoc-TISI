@@ -372,7 +372,7 @@ function atualizarTodosGraficos() {
       "resina ht",
       "resimac 114",
       "resimac 302",
-      "jotun"
+      "jotachar"
     ];
 
     // Inicializa todos com 0
@@ -617,7 +617,7 @@ export function listarGraficos(dados) {
       "resimac 114",
       "resimac 302",
       "resimac",
-      "jotun"
+      "jotachar"
     ];
 
     // Inicializa agrupado
@@ -649,7 +649,7 @@ export function listarGraficos(dados) {
 
       if ((nomeLower.includes("fibra de carbono") && valor < 2) ||
         (nomeLower.includes("resimac") && valor < 2) ||
-        (nomeLower.includes("jotun") && valor < 2) ||
+        (nomeLower.includes("jotachar") && valor < 2) ||
         (nomeLower.includes("resina") && valor < 15) ||
         (nomeLower.includes("fibra de vidro") && valor < 1)) {
         return "rgba(255, 0, 0, 0.7)"; // vermelho
@@ -722,8 +722,8 @@ export function listarGraficos(dados) {
       "resina ht",
       "resimac 114",
       "resimac 302",
-      "resimac",
-      "jotun"
+      "resimac 101",
+      "jotachar"
     ];
 
     // Filtra apenas os materiais da lista
@@ -859,7 +859,7 @@ export function listarGraficos(dados) {
 
             if (estadoGrafico === 'plataforma') {
               plataformaSelecionada = label;
-              aplicarFiltroTabela(graficoPlatNUtilizados, label, "N Utilizado", "plataforma");
+              aplicarFiltroTabela(graficoPlatNUtilizados, label, "N. Utilizado", "plataforma");
               estadoGrafico = 'descricao';
             } else {
               aplicarFiltroTabelaCombinado(graficoPlatNUtilizados, label, plataformaSelecionada, "N. Utilizado");

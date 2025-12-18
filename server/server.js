@@ -2,6 +2,8 @@ const os = require('os');
 const express = require('express');
 const path = require('path');
 const app = express();
+const figlet = require('figlet');
+const chalk = require('chalk');
 const PORT = 8104;
 
 const plataformaRoutes = require('./routes/plataforma.Routes.js');
@@ -51,6 +53,12 @@ function getNetworkInfo() {
 }
 
 app.listen(PORT, () => {
+  console.log(
+  chalk.blue(
+    figlet.textSync("TISI", { font: "ANSI Shadow" })
+  )
+);
+
   const infos = getNetworkInfo();
   console.log(`Servidor rodando em:`);
   console.log(`- Localhost: http://localhost:${PORT}`);

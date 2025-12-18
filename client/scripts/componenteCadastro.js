@@ -11,6 +11,9 @@ function parseISODateLocal(isoDateStr) {
 
 
 
+
+
+
 export function ativarEdicaoMaterial() {
   document.querySelectorAll(".table tbody tr").forEach(function (row) {
     row.addEventListener("click", function () {
@@ -40,6 +43,21 @@ export function ativarEdicaoMaterial() {
       document.getElementById("listaEquipamentos").value = getEquipamentoId(cells[2].innerText); // exemplo: vincular pelo tipo de contagem ou descrição
     });
   });
+
+  document.getElementById("btn-busca-material").addEventListener("click", function () {
+    const termo = document.getElementById("busca").value.toLowerCase();
+    const rows = document.querySelectorAll(".tabela-wrapper tbody tr");
+
+    rows.forEach(row => {
+      const nomeMaterial = row.cells[2].innerText.toLowerCase(); // coluna do nome
+      if (nomeMaterial.includes(termo)) {
+        row.style.display = ""; // mostra
+      } else {
+        row.style.display = "none"; // esconde
+      }
+    });
+  });
+
 }
 
 
@@ -260,22 +278,19 @@ export async function salvarTudo() {
     if (materialPreenchido) {
       console.log("ID do material:", idMaterial);
 
-      const isUpdate = idMaterial && idMaterial.trim() !== "";
+      const isUpdate = idMaterial && idMaterial.trim() !== "" && idMatEmbarque;
       const urlMat = isUpdate
-        ? `/material-com-embarque/${idMaterial}`
+        ? `/material-com-embarque/${idMaterial}/${idMatEmbarque}`
         : `/material-com-embarque`;
 
       const methodMat = isUpdate ? "PUT" : "POST";
 
-      // quantidadeAnterior já salva quando clicou na linha
-      console.log("Quantidade anterior:", quantidadeAnterior);
-
-      // Atualiza ou cria o material principal
       const resMat = await fetch(urlMat, {
         method: methodMat,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(materialPayload)
       });
+
 
       if (!resMat.ok) throw new Error("Erro ao salvar material");
 

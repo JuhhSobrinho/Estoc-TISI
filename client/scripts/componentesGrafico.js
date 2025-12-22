@@ -519,7 +519,7 @@ export function listarGraficos(dados) {
   // --- Materiais a vencer ---
   const vencer = document.getElementById('meuGraficoVencer');
   if (vencer) {
-    
+
     let dadosComValidade = dados.filter(d => d.validade && d.status !== "Utilizado");
 
     // 👇 se já tem plataforma selecionada, filtra só ela
@@ -652,7 +652,7 @@ export function listarGraficos(dados) {
         (nomeLower.includes("resimac") && valor < 2) ||
         (nomeLower.includes("jotachar") && valor < 2) ||
         (nomeLower.includes("resina") && valor < 15) ||
-        (nomeLower.includes("fibra de vidro") && valor < 1)) {
+        (nomeLower.includes("fibra de vidro") && valor < 2)) {
         return "rgba(255, 0, 0, 0.7)"; // vermelho
       }
 
@@ -751,7 +751,7 @@ export function listarGraficos(dados) {
       data: {
         labels,
         datasets: [{
-          label: 'Número de Itens (Materiais específicos)',
+          label: 'Materiais por Plataforma',
           data: valores,
           backgroundColor: 'rgba(40, 167, 69, 0.5)',
           borderColor: 'rgba(40, 167, 69, 1)',
@@ -781,8 +781,13 @@ export function listarGraficos(dados) {
             }
 
             atualizarEscalaY(graficoPlatUtilizados, estadoGrafico);
+
+            // 🔹 Atualiza o título do eixo X dinamicamente
+            graficoPlatUtilizados.options.scales.x.title.text = plataformaSelecionada;
+            graficoPlatUtilizados.update();
           }
-        },
+        }
+        ,
         scales: {
           y: {
             type: 'logarithmic',
@@ -798,7 +803,7 @@ export function listarGraficos(dados) {
           x: {
             title: {
               display: true,
-              text: 'Plataforma'
+              text: plataformaSelecionada
             },
             ticks: {
               callback: function (value, index) {
@@ -843,7 +848,7 @@ export function listarGraficos(dados) {
       data: {
         labels,
         datasets: [{
-          label: 'Materiais Não Utilizados',
+          label: 'Materiais Não Utilizados Especificos por Plataforma',
           data: valores,
           backgroundColor: 'rgba(108, 117, 125, 0.5)',
           borderColor: 'rgba(108, 117, 125, 1)',
@@ -864,12 +869,17 @@ export function listarGraficos(dados) {
               estadoGrafico = 'descricao';
             } else {
               aplicarFiltroTabelaCombinado(graficoPlatNUtilizados, label, plataformaSelecionada, "N. Utilizado");
-              estadoGrafico = 'plataforma'; // opcional: alterna de volta
+              estadoGrafico = 'plataforma'; // alterna de volta
             }
 
             atualizarEscalaY(graficoPlatNUtilizados, estadoGrafico);
+
+            // 🔹 Atualiza o título do eixo X dinamicamente
+            graficoPlatNUtilizados.options.scales.x.title.text = plataformaSelecionada;
+            graficoPlatNUtilizados.update();
           }
-        },
+        }
+        ,
         scales: {
           y: {
             type: 'logarithmic',
@@ -880,12 +890,13 @@ export function listarGraficos(dados) {
             },
             ticks: {
               callback: value => Number(value).toLocaleString()
-            }
+            },
+            min: 0
           },
           x: {
             title: {
               display: true,
-              text: 'Plataforma'
+              text: plataformaSelecionada
             },
             ticks: {
               callback: function (value, index) {

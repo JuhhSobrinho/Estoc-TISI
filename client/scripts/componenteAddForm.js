@@ -123,6 +123,7 @@ export async function inicializarFormularioDeRequisicao() {
             select.innerHTML = '<option value="">Selecione</option>';
             materiais.forEach(mat => {
                 const nome = mat.material.nome_material;
+                const kardex = mat.material.kardex_mat;
                 const chave = mat.id_mat_emb; // 👈 usar id_mat_emb como chave única
 
                 materiaisMapeados[chave] = {
@@ -133,7 +134,7 @@ export async function inicializarFormularioDeRequisicao() {
 
                 const option = document.createElement("option");
                 option.value = chave;
-                option.textContent = `${nome} (Qtd: ${mat.quantidade})`;
+                option.textContent = `${nome} (Qtd: ${mat.quantidade}) (Kdx: ${kardex})`;
                 select.appendChild(option);
             });
         });

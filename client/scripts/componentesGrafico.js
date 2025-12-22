@@ -519,6 +519,7 @@ export function listarGraficos(dados) {
   // --- Materiais a vencer ---
   const vencer = document.getElementById('meuGraficoVencer');
   if (vencer) {
+    
     let dadosComValidade = dados.filter(d => d.validade && d.status !== "Utilizado");
 
     // 👇 se já tem plataforma selecionada, filtra só ela
@@ -595,7 +596,7 @@ export function listarGraficos(dados) {
           y: {
             type: 'time',
             time: { unit: 'day', tooltipFormat: 'dd/MM/yyyy', displayFormats: { day: 'dd/MM/yyyy' } },
-            min: '2025-10-10',
+            min: minData,
             max: maxData,
             title: { display: true, text: 'Data de Validade' }
           }

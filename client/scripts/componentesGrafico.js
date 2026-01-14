@@ -492,6 +492,8 @@ function aplicarFiltroPorTipo(tipoFiltro) {
     graficoPlatNUtilizados.data.datasets[0].data = Object.values(agrupadoNU);
     graficoPlatNUtilizados.update();
   }
+
+  
 }
 
 

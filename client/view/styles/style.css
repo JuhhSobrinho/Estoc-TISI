@@ -114,7 +114,9 @@
     }
 
 
-
+.qtdTotal{
+    display:contents !important;
+}
 
 
     /*/////////////////// grafico /////////////////*/

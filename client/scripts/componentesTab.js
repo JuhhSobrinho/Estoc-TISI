@@ -106,8 +106,14 @@ function aplicarFiltrosEGrafico() {
 
     // Filtra os dados compartilhados com base nos critérios
     const filtrados = dados.filter(d => {
-        const nomeMatch = d.descricao.toLowerCase().includes(busca);
-        const kardexMatch = d.kardex.toLowerCase().includes(buscaKd);
+        const nomeMatch = d.descricao
+            ? d.descricao.toLowerCase().includes(busca)
+            : false;
+
+        const kardexMatch = d.kardex
+            ? d.kardex.toLowerCase().includes(buscaKd)
+            : false;
+
         const statusMatch = status ? d.status === status : true;
         const tipoMatch = tipos ? d.tipo === tipos : true;
         const vencidoMatch = vencidos
@@ -130,9 +136,42 @@ function aplicarFiltrosEGrafico() {
             ? d.dtEmbarque && isSameMonth(parseISODateToDateObjectEmb(d.dtEmbarque), buscaDtEmb)
             : true;
 
+
+
         return nomeMatch && kardexMatch && statusMatch && tipoMatch && vencidoMatch &&
             rtMatch && clienteMatch && baseMatch && unidadeMatch && embarqueMatch;
+
     });
+
+
+    // Depois de aplicar os filtros e ter o array 'filtrados'
+
+    // Calcula os totais
+    let qtdBaseTotal = 0;
+    let qtdOffTotal = 0;
+    let qtdTotal = 0;
+
+    filtrados.forEach(d => {
+        const qtd = Number(d.quantidade) || 0;
+        qtdTotal += qtd;
+
+        if (d.platDestino === 'BASE') {
+            qtdBaseTotal += qtd;
+        } else {
+            qtdOffTotal += qtd;
+        }
+        console.log(qtdBaseTotal, qtdOffTotal, qtdTotal);
+    });
+
+    console.log(qtdBaseTotal, qtdOffTotal, qtdTotal);
+    
+
+    // Atualiza os elementos no HTML
+    document.getElementById('qtdBaseTotal').textContent = qtdBaseTotal;
+    document.getElementById('qtdOffTotal').textContent = qtdOffTotal;
+    document.getElementById('qtdTotal').textContent = qtdTotal;
+
+
 
     // Atualiza a tabela visualmente
     const linhas = document.querySelectorAll('table tbody tr');

@@ -61,10 +61,6 @@
                 <option value="Tinta">Tinta</option>
                 <option value="Caixa">Caixa</option>
 
-
-
-
-
             </select>
         </div>
     </div>
@@ -118,37 +114,51 @@
     filtros</button>
 <button class="btn btn-secondary" onclick="limparFiltroTabela()">Limpar
     Filtro</button>
+<table class="table table-striped-columns">
+    <thead><tr>
+            <th scope="col">QTD Base</th>
+            <th scope="col">QTD Offshore</th>
+            <th scope="col">QTD Total</th>
 
-<h2>Tab</h2>
-<div class="tabela-wrapper">
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Qtd.</th>
-                <th scope="col">Descrição</th>
-                <th scope="col">Tip. Cont.</th>
-                <th scope="col">Unidade. Medida</th>
-                <th scope="col">Valor Unitario</th>
-                <th scope="col">Kardex</th>
-                <th scope="col">Dt. Validade</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Status</th>
-
-                <th scope="col">Embarque RT</th>
-                <th scope="col">Dt. Embarque</th>
-                <th scope="col">Plat. Origen</th>
-                <th scope="col">Plat. Destino</th>
-                <th scope="col">Cliente</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                
-            </tr>
-
-        </tbody>
-        
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="qtdTotal">
+            <td id="qtdBaseTotal">0</td>
+            <td id="qtdOffTotal">0</td>
+            <td id="qtdTotal">0</td>
+        </tr>
     </table>
-</div>
+
+    <div class="tabela-wrapper">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Qtd.</th>
+                    <th scope="col">Descrição</th>
+                    <th scope="col">Tip. Cont.</th>
+                    <th scope="col">Unidade. Medida</th>
+                    <th scope="col">Valor Unitario</th>
+                    <th scope="col">Kardex</th>
+                    <th scope="col">Dt. Validade</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Status</th>
+
+                    <th scope="col">Embarque RT</th>
+                    <th scope="col">Dt. Embarque</th>
+                    <th scope="col">Plat. Origen</th>
+                    <th scope="col">Plat. Destino</th>
+                    <th scope="col">Cliente</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+    </div>

@@ -314,6 +314,18 @@ export function montarGrafico(dados) {
     document.getElementById('btnAplicarFiltros')
         .addEventListener('click', aplicarFiltrosEGrafico);
 
+    // Captura todos os inputs e selects que fazem parte dos filtros
+    const filtros = document.querySelectorAll('#busca, #buscaKd, #status, #tipo, #buscaRT, #cliente, #Unidade, #buscaDtEmb');
+
+    // Para cada campo, adiciona um listener de teclado
+    filtros.forEach(filtro => {
+        filtro.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // evita enviar formulário ou recarregar página
+                aplicarFiltrosEGrafico(); // chama a mesma função do botão
+            }
+        });
+    });
 
 }
 

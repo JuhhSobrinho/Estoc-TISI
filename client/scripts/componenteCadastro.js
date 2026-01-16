@@ -46,17 +46,21 @@ export function ativarEdicaoMaterial() {
 
   document.getElementById("btn-busca-material").addEventListener("click", function () {
     const termo = document.getElementById("busca").value.toLowerCase();
+    const plataformaDestino = "".toLowerCase(); // hardcoded por enquanto
     const rows = document.querySelectorAll(".tabela-wrapper tbody tr");
 
     rows.forEach(row => {
       const nomeMaterial = row.cells[2].innerText.toLowerCase(); // coluna do nome
-      if (nomeMaterial.includes(termo)) {
+      const plataforma = row.cells[13].innerText.toLowerCase();   // coluna da plataforma
+
+      if (nomeMaterial.includes(termo) && plataforma.includes(plataformaDestino)) {
         row.style.display = ""; // mostra
       } else {
         row.style.display = "none"; // esconde
       }
     });
   });
+
 
 }
 

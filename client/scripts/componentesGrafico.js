@@ -175,7 +175,7 @@ function aplicarFiltroTabela(grafico, valorFiltro, filtroStatus = null, tipoFilt
     }
 
     if (filtroStatus) {
-      mostrar = mostrar && status === filtroStatus;
+      mostrar = mostrar && status !== filtroStatus;  //alterado por @JuhhSobrinho
     }
 
     linha.style.display = mostrar ? '' : 'none';
@@ -719,10 +719,10 @@ export function listarGraficos(dados) {
 
     // Lista de materiais permitidos
     const materiaisPermitidos = [
-      "fibra de carbono",
+      "fibra de carbono bc",
       "fibra de vidro",
-      "resina st",
-      "resina ht",
+      "resina st a+b",
+      "resina ht a+b",
       "resimac 114",
       "resimac 302",
       "resimac 101",
@@ -867,7 +867,7 @@ export function listarGraficos(dados) {
 
             if (estadoGrafico === 'plataforma') {
               plataformaSelecionada = label;
-              aplicarFiltroTabela(graficoPlatNUtilizados, label, "N. Utilizado", "plataforma");
+              aplicarFiltroTabela(graficoPlatNUtilizados, label, "Utilizado", "plataforma");
               estadoGrafico = 'descricao';
             } else {
               aplicarFiltroTabelaCombinado(graficoPlatNUtilizados, label, plataformaSelecionada, "N. Utilizado");

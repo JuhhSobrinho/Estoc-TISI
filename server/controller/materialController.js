@@ -47,7 +47,7 @@ exports.setMaterialComEmbarque = async (req, res) => {
                     frete_mat_emb: valor_unidade_mat,
                     rt_emb: kardex_mat,
                     status_mat_emb: status_mat,
-                    id_embarque: 1, // ID da BASE
+                    id_embarque: 1, // 13 ID da BASE ALTERADOOOOOO PARA p-77 @JuhhSobrinho
                     data_mat_emb: new Date().toISOString().split('T')[0]
                 }
             ]);

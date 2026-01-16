@@ -493,7 +493,7 @@ function aplicarFiltroPorTipo(tipoFiltro) {
     graficoPlatNUtilizados.update();
   }
 
-  
+
 }
 
 
@@ -531,80 +531,39 @@ export function listarGraficos(dados) {
 
     dadosComValidade.sort((a, b) => new Date(a.validade) - new Date(b.validade));
 
-    const dadosGrafico = dadosComValidade.map(d => ({
-      x: d.descricao,
-      y: new Date(d.validade)
-    }));
-
     const datasSomente = dadosComValidade.map(d => new Date(d.validade));
     const minData = new Date(Math.min(...datasSomente));
     const maxData = new Date(Math.max(...datasSomente));
 
     graficoVencer = new Chart(vencer.getContext('2d'), {
-      type: 'scatter',
+      type: 'bar',
       data: {
+        labels: dadosComValidade.map(d => d.descricao),
         datasets: [{
-          label: 'Validade',
-          data: dadosGrafico,
+          label: 'Data de Validade',
+          data: dadosComValidade.map(d => new Date(d.validade)),
           backgroundColor: 'rgba(255, 193, 7, 0.5)',
           borderColor: 'rgba(255, 193, 7, 1)',
           borderWidth: 1
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        onClick: (evt, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            const descricaoSelecionada = graficoVencer.data.datasets[0].data[index].x;
-
-            const dados = coletarDadosTabela();
-
-            let filtrados = dados.filter(d =>
-              d.descricao === descricaoSelecionada &&
-              d.status !== "Utilizado"
-            );
-
-            if (plataformaSelecionada) {
-              filtrados = filtrados.filter(d => d.platDestino === plataformaSelecionada);
-            }
-
-            // Atualiza tabela
-            const linhas = document.querySelectorAll('table tbody tr');
-            linhas.forEach(linha => {
-              const cols = linha.querySelectorAll('td');
-              const descLinha = cols[1]?.textContent.trim();
-              const platDestino = cols[12]?.textContent.trim();
-              const mostrar = filtrados.some(d =>
-                d.descricao === descLinha &&
-                (!plataformaSelecionada || d.platDestino === plataformaSelecionada)
-              );
-              linha.style.display = mostrar ? '' : 'none';
-            });
-
-            // Atualiza gráfico de validade
-            const dadosGrafico = filtrados.map(d => ({
-              x: d.descricao,
-              y: new Date(d.validade)
-            }));
-
-            graficoVencer.data.datasets[0].data = dadosGrafico;
-            graficoVencer.update();
-          }
-        },
         scales: {
-          x: { type: 'category', title: { display: true, text: 'Descrição do Material' } },
-          y: {
+          x: {
             type: 'time',
-            time: { unit: 'day', tooltipFormat: 'dd/MM/yyyy', displayFormats: { day: 'dd/MM/yyyy' } },
+            time: { unit: 'day', tooltipFormat: 'dd/MM/yyyy' },
             min: minData,
             max: maxData,
             title: { display: true, text: 'Data de Validade' }
-          }
+          },
+          y: { title: { display: true, text: 'Descrição do Material' } }
         }
       }
     });
+
   }
 
 

@@ -164,7 +164,7 @@ function aplicarFiltrosEGrafico() {
     });
 
     console.log(qtdBaseTotal, qtdOffTotal, qtdTotal);
-    
+
 
     // Atualiza os elementos no HTML
     document.getElementById('qtdBaseTotal').textContent = qtdBaseTotal;
@@ -190,13 +190,16 @@ function aplicarFiltrosEGrafico() {
 
 
     // Atualiza o gráfico
+    // Atualiza o gráfico
     const canvas = document.getElementById('meuGrafico');
     const grafico = Chart.getChart(canvas);
     if (grafico) {
         grafico.data.labels = filtrados.map(d => d.descricao);
         grafico.data.datasets[0].data = filtrados.map(d => d.quantidade);
+        grafico.data.datasets[0].plataformas = filtrados.map(d => d.platDestino); // 👈 atualiza plataformas
         grafico.update();
     }
+
 }
 
 
@@ -321,6 +324,7 @@ function montarGraficoComDados() {
     const dados = coletarDadosTabela();
     const labels = dados.map(d => d.descricao);
     const valores = dados.map(d => d.quantidade);
+    const plataformas = dados.map(d => d.platDestino); // 👈 pega a plataforma
 
     new Chart(ctx.getContext('2d'), {
         type: 'bar',
@@ -331,18 +335,31 @@ function montarGraficoComDados() {
                 data: valores,
                 backgroundColor: 'rgba(0, 123, 255, 0.5)',
                 borderColor: 'rgba(0, 123, 255, 1)',
-                borderWidth: 1
+                borderWidth: 1,
+                plataformas // 👈 adiciona como metadado
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const qtd = context.raw;
+                            const plataforma = context.dataset.plataformas[context.dataIndex];
+                            const descricao = context.label;
+                            return `${descricao}: ${qtd} (Plataforma: ${plataforma})`;
+                        }
+                    }
+                }
+            },
             scales: {
                 y: {
                     type: 'logarithmic',
                     beginAtZero: true,
-                    min: 1, // evita que valores muito pequenos fiquem achatados
-                    max: 1000, // ajusta o topo para não exagerar
+                    min: 1,
+                    max: 1000,
                     title: {
                         display: true,
                         text: 'Quantidade'
@@ -359,7 +376,6 @@ function montarGraficoComDados() {
                     ticks: {
                         callback: function (value, index) {
                             const label = this.getLabelForValue(value);
-                            // Limita a 15 caracteres e adiciona "..." se for maior
                             return label.length > 15 ? label.substring(0, 15) + '...' : label;
                         }
                     }
@@ -368,3 +384,4 @@ function montarGraficoComDados() {
         }
     });
 }
+

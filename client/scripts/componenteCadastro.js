@@ -46,8 +46,12 @@ export function ativarEdicaoMaterial() {
 
   document.getElementById("btn-busca-material").addEventListener("click", function () {
     const termo = document.getElementById("busca").value.toLowerCase();
-    const plataformaDestino = "".toLowerCase(); // hardcoded por enquanto
+    const selectUnidade = document.getElementById('Unidade');
+    console.log("unidade selecionada:", selectUnidade.value);
+
+    const plataformaDestino = selectUnidade.value.toLowerCase(); // hardcoded por enquanto
     const rows = document.querySelectorAll(".tabela-wrapper tbody tr");
+
 
     rows.forEach(row => {
       const nomeMaterial = row.cells[2].innerText.toLowerCase(); // coluna do nome
@@ -60,6 +64,34 @@ export function ativarEdicaoMaterial() {
       }
     });
   });
+
+
+
+
+  fetch('/plataformas/embarquesPlat')
+    .then(res => res.json())
+    .then(embarques => {
+      const selectUnidade = document.getElementById('Unidade');
+      selectUnidade.innerHTML = '';
+
+      const opcaoTodas = document.createElement('option');
+      opcaoTodas.value = '';
+      opcaoTodas.textContent = 'Todas';
+      selectUnidade.appendChild(opcaoTodas);
+
+      embarques.forEach(e => {
+        const opcao = document.createElement('option');
+        opcao.id = e.id_emb; // id do embarque
+        opcao.textContent = e.plataforma_destino.nome_plat; // nome da plataforma
+        opcao.value = e.plataforma_destino.nome_plat; // nome da plataforma
+        selectUnidade.appendChild(opcao);
+      });
+    })
+    .catch(err => console.error('Erro ao buscar embarques:', err));
+
+
+
+
 
 
 }
@@ -214,8 +246,13 @@ export async function salvarTudo() {
 
   const tipoMaterial = parseInt(document.getElementById("tipoMaterial").value);
 
+  const selectUnidade = document.getElementById('Unidade');
+  const optionSelecionada = selectUnidade.options[selectUnidade.selectedIndex];
+  console.log("id selecionado:", optionSelecionada.id);
+
   const validadeValue = document.getElementById("validade").value.trim();
   const materialPayload = {
+    id_embarque: optionSelecionada.id === "" ? 1 : optionSelecionada.id,
     nome_material: document.getElementById("descricao").value.trim(),
     qtd_mat: document.getElementById("quantidade").value.trim(),
     tipo_contagem_mat: document.getElementById("tipoContagem").value.trim(),
@@ -250,6 +287,7 @@ export async function salvarTudo() {
 
   // --- Verificações específicas ---
   const materialPreenchido =
+    materialPayload.id_embarque &&
     materialPayload.nome_material &&
     materialPayload.qtd_mat &&
     materialPayload.tipo_contagem_mat &&

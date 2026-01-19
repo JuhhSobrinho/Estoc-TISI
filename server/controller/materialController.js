@@ -2,6 +2,7 @@ const supabase = require('../config/config.js');
 
 exports.setMaterialComEmbarque = async (req, res) => {
     const {
+        id_embarque,
         nome_material,
         tipo_contagem_mat,
         unidade_medida,
@@ -38,16 +39,27 @@ exports.setMaterialComEmbarque = async (req, res) => {
         const idMaterial = materialData.id_mat;
 
         // 2. Cadastrar embarque padrão BASE → BASE
+        const hoje = new Date();
+        const dia = String(hoje.getDate()).padStart(2, '0');       // 16
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0');  // 12
+        const ano = String(hoje.getFullYear()).slice(-2);          // 25
+
+        const dataCompacta = `${dia}${mes}${ano}`; // "161225"
+
+
+
         const { data: embarqueData, error: embarqueError } = await supabase
+
+
             .from('material_embarque')
             .insert([
                 {
                     id_material: idMaterial,
                     quantidade: qtd_mat,
                     frete_mat_emb: valor_unidade_mat,
-                    rt_emb: kardex_mat,
+                    rt_emb: id_embarque + "-" + dataCompacta,
                     status_mat_emb: status_mat,
-                    id_embarque: 1, // 13 ID da BASE ALTERADOOOOOO PARA p-77 @JuhhSobrinho
+                    id_embarque: id_embarque, // 13 ID da BASE ALTERADOOOOOO PARA p-77 @JuhhSobrinho
                     data_mat_emb: new Date().toISOString().split('T')[0]
                 }
             ]);

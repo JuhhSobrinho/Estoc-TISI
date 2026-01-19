@@ -332,36 +332,40 @@ function atualizarTodosGraficos() {
   }
 
   // Atualiza gráfico de validade
-  if (graficoVencer) {
-    const dadosComValidade = dadosFiltrados.filter(d => d.validade);
+ if (graficoVencer) {
+  // Filtra apenas materiais com validade e não utilizados
+  let dadosComValidade = dadosFiltrados.filter(
+    d => d.validade && d.status !== "Utilizado"
+  );
 
-    const pontos = dadosComValidade
-      .map(d => {
-        const dt = new Date(d.validade);
-        return (dt instanceof Date && !isNaN(dt)) ? { x: d.descricao, y: dt } : null;
-      })
-      .filter(Boolean);
+  // Ordena pela data de validade
+  dadosComValidade.sort(
+    (a, b) => new Date(a.validade) - new Date(b.validade)
+  );
 
-    const datasValidas = pontos.map(p => p.y);
-    if (datasValidas.length > 0) {
-      const hoje = new Date();
-      const inicioAno = new Date(hoje.getFullYear(), 0, 1);
+  // Extrai as datas para calcular min e max
+  const datasSomente = dadosComValidade.map(d => new Date(d.validade));
+  const minData = datasSomente.length
+    ? new Date(Math.min(...datasSomente))
+    : undefined;
+  const maxData = datasSomente.length
+    ? new Date(Math.max(...datasSomente))
+    : undefined;
 
-      const minData = new Date(Math.min(...datasValidas));
-      const maxData = new Date(Math.max(...datasValidas));
-      const minFinal = minData < inicioAno ? inicioAno : minData;
+  // Atualiza labels e dados do gráfico
+  graficoVencer.data.labels = dadosComValidade.map(d => d.descricao);
+  graficoVencer.data.datasets[0].data = dadosComValidade.map(
+    d => new Date(d.validade)
+  );
 
-      graficoVencer.data.datasets[0].data = pontos;
-      graficoVencer.options.scales.y.min = minFinal;
-      graficoVencer.options.scales.y.max = maxData;
-      graficoVencer.update();
-    } else {
-      graficoVencer.data.datasets[0].data = [];
-      graficoVencer.options.scales.y.min = undefined;
-      graficoVencer.options.scales.y.max = undefined;
-      graficoVencer.update();
-    }
-  }
+  // Atualiza limites do eixo X
+  graficoVencer.options.scales.x.min = minData;
+  graficoVencer.options.scales.x.max = maxData;
+
+  // Renderiza novamente
+  graficoVencer.update();
+}
+
 
   // Atualiza gráfico de baixo estoque (com filtro de materiais principais)
   if (graficoBaixoEstoque) {

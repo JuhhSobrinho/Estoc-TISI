@@ -12,6 +12,25 @@ exports.getPlataformas = async (req, res) => {
   res.json(data);
 };
 
+exports.getEmbarquesPorPlataforma = async (req, res) => {
+  const { data, error } = await supabase
+    .from('embarque')
+    .select(`
+      id_emb,
+      plataforma_destino:plataforma_destino_id_emb (
+        nome_plat
+      )
+    `);
+
+  if (error) {
+    return res.status(400).json({ error });
+  }
+
+  res.json(data);
+};
+
+
+
 
 exports.cadastrarPlataforma = async (req, res) => {
   const { nome_plat, cliente_plat, contrato } = req.body;

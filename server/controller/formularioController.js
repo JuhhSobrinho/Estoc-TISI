@@ -259,11 +259,17 @@ exports.confirmarRequisicao = async (req, res) => {
       return res.status(400).json({ error: updateError });
     }
 
+    const hoje = new Date();
+    const dia = String(hoje.getDate()).padStart(2, '0');       // 16
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');  // 12
+    const ano = String(hoje.getFullYear()).slice(-2);          // 25
+
+    const dataCompacta = `${dia}${mes}${ano}`;
     // Cria destino → mesma qtd transferida, novo embarque
     const { error: insertError } = await supabase
       .from('material_embarque')
       .insert({
-        rt_emb: 'TRANSFERENCIA',
+        rt_emb: destino + "-" + dataCompacta,
         id_material: origem.id_material,   // FK correta
         id_embarque: destino,              // embarque de destino
         frete_mat_emb: 0,

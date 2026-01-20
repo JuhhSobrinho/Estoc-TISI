@@ -4,6 +4,7 @@ const path = require('path');
 const app = express();
 const figlet = require('figlet');
 const chalk = require('chalk');
+const { exec } = require('child_process');
 const PORT = 8104;
 
 const plataformaRoutes = require('./routes/plataforma.Routes.js');
@@ -52,18 +53,40 @@ function getNetworkInfo() {
   return results;
 }
 
+function getWifiSSID(callback) {
+  exec('netsh wlan show interfaces', (err, stdout) => {
+    if (err) {
+      callback(null); return;
+    }
+    const match = stdout.match(/SSID\s*:\s*(.+)/);
+    if (match) {
+      callback(match[1].trim());
+    } else {
+      callback(null);
+    }
+  });
+}
+
 app.listen(PORT, () => {
   console.log(
-  chalk.blue(
-    figlet.textSync("TISI", { font: "ANSI Shadow" })
-  )
-);
+    chalk.blue(
+      figlet.textSync("TISI", { font: "ANSI Shadow" })
+    )
+  );
 
   const infos = getNetworkInfo();
   console.log(`Servidor rodando em:`);
   console.log(`- Localhost: http://localhost:${PORT}`);
 
   infos.forEach(info => {
-    console.log(`- Rede "${info.name}": http://${info.address}:${PORT}`);
+    console.log(`- Link do sistema "${info.name}": http://${info.address}:${PORT}`);
+  });
+
+  getWifiSSID((ssid) => {
+    if (ssid) {
+      console.log(`📡 Conectado ao Wi-Fi: ${ssid}`);
+    } else {
+      console.log("📡 Nenhuma conexão Wi-Fi ativa encontrada.");
+    }
   });
 });
